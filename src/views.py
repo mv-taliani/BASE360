@@ -50,7 +50,7 @@ def pesquisar_post():
 def clientes():
     cliente = Cliente.query.all()
     if not cliente:
-        flash('Você ainda não possui nenhum cliente!', 'primary')
+        flash('Você ainda não possui clientes!', 'primary')
         return redirect(url_for('views.vender'))
     return render_template('clientes.html', clientes=cliente)
 
