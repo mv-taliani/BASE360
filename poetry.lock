@@ -477,6 +477,25 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
+name = "jinja2-fragments"
+version = "0.3.0"
+description = "Render Jinja2 template block as HTML page fragments on Python web frameworks."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "jinja2_fragments-0.3.0-py3-none-any.whl", hash = "sha256:0e93af60da2af334bfaa0fcc549e9d493bf466774c5f30b49ac085a1ffeaae3f"},
+    {file = "jinja2_fragments-0.3.0.tar.gz", hash = "sha256:4068b47239f0bc2ca71ee2a4d9521a225ae8e3d4bb84a9ca89bd26a608812163"},
+]
+
+[package.dependencies]
+jinja2 = ">=3.1.0"
+
+[package.extras]
+dev = ["pre-commit"]
+tests = ["fastapi", "flask (>=2.1.0)", "pytest", "pytest-asyncio", "quart (>=0.18.0)"]
+
+[[package]]
 name = "mako"
 version = "1.2.4"
 description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
@@ -860,4 +879,4 @@ WTForms = ">=1.0.5"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "014c147b30f4a562b38f7007cd6b6a9c115e6bd5d4b7c54dd4640ece8fbd7e62"
+content-hash = "572cf1d867b74f0d70908fc9e865f22e6a3738936963a2d38a967b1a51e88a21"
