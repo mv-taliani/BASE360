@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>CONFIRME</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+  <link href= "{{ url_for('static', filename='/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href= "{{ url_for('static', filename='/css/etapas.css') }}"" rel="stylesheet">
+</head>
+<body>
+  <section id="contact" class="contact section-bg">
+    <div class="container" data-aos="fade-up">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="page-title home text-center">
+            <img src="{{ url_for('static', filename='images/logos/base360.png') }} width="50%">
+          </div>          
+          <div class="section-title">
+            <h2>ACESSO AO CONTRATO</h2>
+            <p>CONFIRME SEU CPF</p>
+          </div>
+          <div class="row justify-content-center">
+            <div class="col-lg-9">
+              <div class="info-box mb-4">
+                <form class="">
+                  <h3>Vamos lá?</h3>
+                  <div class="col-md-12">
+                    <input class="form-control text-center" type="text" id="CPF" placeholder="CPF" required>
+                  </div>
+                  <br>
+                  <div>
+                    <div class="col-md-12">
+                      <input class="form-control text-center" type="text" id="senhaInput" placeholder="Senha" required>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="php-email-form">
+                    <div class="text-center"><button type="submit">GERAR SENHA</button></div>
+                  </div>
+                  <br>
+                </form>
+                <form class="">
+                  <div class="Proponente">
+                    <div class="col-md-12">
+                      <input class="form-control text-center" type="text" id="proponente" placeholder="Proponente" required>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="Responsável">
+                    <div class="col-md-12">
+                      <input class="form-control text-center" type="text" id="responsavel" placeholder="Responsável legal" required>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="cnpj">
+                    <div class="col-md-12">
+                      <input class="form-control text-center" type="text" id="cnpj" placeholder="CNPJ" required>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="endereco">
+                    <div class="col-md-12">
+                      <input class="form-control text-center" type="text" id="endereco" placeholder="Endereço" required>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="aporte">
+                    <div class="col-md-12">
+                      <input class="form-control text-center" type="text" id="aporte" placeholder="Valor de aporte" required>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="Lote de Apagamento">
+                    <div class="col-md-12">
+                      <input class="form-control text-center" type="text" id="aporte" placeholder="Valor de aporte" required>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="php-email-form">
+                    <div class="text-center"><button type="submit">Seguir</button></div>
+                  </div>
+                </form>
+                <div class="preechimento1">
+                  <ul>
+                    <li>Determine a identidade organizacional (Nesta seção, deverá ser fornecida uma visão geral do seu negócio. Assim, precisará considerar aspectos que o tornem único. A identidade deve levar como base a Misão, Visão e Valores da empresa)</li>
+                    <br>
+                    <li>Missão: É a razão pela qual a sua empresa existe</li>
+                    <br>
+                    <li>Valores: São os princípios inegociáveis</li>
+                    <br>
+                    <li>Visão: É onde você quer chegar com a sua empresa pensando em longo prazo.</li>  
+                  </ul>
+                  <form>
+                    <div class="">
+                      <div class="col-md-12">
+                        <input class="form-control text-center" type="text" id="resposta1" placeholder="Digite a sua resposta" required>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="preechimento2">
+                  <ul>
+                    <p>Análise do mercado de atuação do seu negócios. Sobre você e/ou sua empresa se já for estabelecido (A ideia nesta seção é de unificar o mercado que pretende atuar ou já atua com sue projeto, e também falar sobre mercado alvo, tendências, crescimento e vantagens do mercado de atuação)</p>
+                    <br>
+                  </ul>
+                  <form>
+                    <div class="">
+                      <div class="col-md-12">
+                        <input class="form-control text-center" type="text" id="resposta2" placeholder="Digite a sua resposta" required>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="preechimento3">
+                  <ul>
+                    <p>Quais são os objetivos de negócio? (Os objetivos de negócios são tudo o que você pretende alcançar com o seu projeto, fale do geral até o específico.)</p>
+                    <br>
+                  </ul>
+                  <form>
+                    <div class="">
+                      <div class="col-md-12">
+                        <input class="form-control text-center" type="text" id="resposta3" placeholder="Digite a sua resposta" required>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="preechimento4">
+                  <ul>
+                    <p>Nessa seção deverá ser preenchido a análise SWOT</p>
+                  </ul>
+                  <form>
+                    <div class="">
+                      <div class="col-md-12">
+                        <input class="form-control text-center" type="text" id="resposta4" placeholder="Digite a sua resposta" required>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="preechimento5">
+                    <table>
+                      <thead>
+                          <tr>
+                              <th>Descrição detalhada</th>
+                              <th>Período de utilização</th>
+                              <th>Valor total destinado para essa aquisição</th>
+                              <th>Justificativa</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                            <td>TESTE</td>
+                            <td>TESTE</td>
+                            <td>TESTE</td>
+                            <td>TESTE</td>
+                          </tr>
+                          <tr>
+                          </tr>
+                      </tbody>
+                  </table>
+                </div>
+                <div class="preechimento6">
+                  <ul>
+                    <p>Plano de marketing e estratégias de continuidade do seu projeto (Aqui deverá ser preenchido o planejamento de estratégia para alavancagem do produto/empresa e como sua empresa permanecerá ativa após o término do recurso)</p>
+                  </ul>
+                  <form>
+                    <div class="">
+                      <div class="col-md-12">
+                        <input class="form-control text-center" type="text" id="resposta6" placeholder="Digite a sua resposta" required>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="preechimento7">
+                  <ul>
+                    <p>Resumo de planos futuros (Se pretende ter algum negócio social e se tem planos de expansão e afins)</p>
+                  </ul>
+                  <form>
+                    <div class="">
+                      <div class="col-md-12">
+                        <input class="form-control text-center" type="text" id="resposta7" placeholder="Digite a sua resposta" required>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="preechimento8">
+                  <ul>
+                    <p>Nesta seção deverá ser preenchido a contrapartida social (Ou seja, dos 10% da verba destina ao CANS, 5% ficará para o CANS e os demais serão destinados a instituição descrita abaixo) -  Descreva a instituição</p>
+                  </ul>
+                  <form>
+                    <div class="">
+                      <div class="col-md-12">
+                        <input class="form-control text-center" type="text" id="resposta8" placeholder="Digite a sua resposta" required>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
