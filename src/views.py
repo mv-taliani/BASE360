@@ -48,8 +48,11 @@ def pesquisar_post():
 @views.get('/clientes')
 @login_required
 def clientes():
-    cliente = Cliente.query.filter_by(cpf='4444444444').first()
-    return render_template('clientes.html', clientes=[cliente])
+    cliente = Cliente.query.all()
+    if not cliente:
+        flash('Você ainda não possui nenhum cliente!', 'primary')
+        return redirect(url_for('views.vender'))
+    return render_template('clientes.html', clientes=cliente)
 
 def configure(app):
     app.register_blueprint(views)

@@ -15,7 +15,7 @@ from src.cliente import configure as cliente_config
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = '230894ruw2ru9wuef9aue90fu90fuwdufisdou9sdufwpwe9fw04r9sdposdçflj'
-    app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///teste.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///batata.db'
     db_config(app)
     app.config['DEBUG_TB_TEMPLATE_EDITOR_ENABLED'] = True
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
