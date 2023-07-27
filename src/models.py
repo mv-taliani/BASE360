@@ -119,7 +119,7 @@ class Links(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
     criada = db.Column(db.DateTime(timezone=False), default=db.func.now())
     link = db.Column(db.String)
-    acessos = db.Column(db.Integer)
+    acessos = db.Column(db.Integer, default=0)
 
     cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
 

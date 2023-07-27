@@ -31,17 +31,16 @@ def vender():
 @views.get('/cliente/<cpf>')
 def pesquisar(cpf):
     cliente = Cliente.query.filter_by(cpf=cpf).first()
+    if not cliente:
+        flash('Não encontrado', 'danger')
+        return redirect(url_for('.vender'))
     return render_template('cliente.html', cliente=cliente)
 
 
 @views.post('/cliente/')
 def pesquisar_post():
     dado = request.form.get('cpf').replace('.', '').replace('-', '').replace('(', '').replace(')', '')
-    cliente = Cliente.query.filter((Cliente.cpf == dado)).first()
-    if not cliente:
-        flash('Não encontrado', 'danger')
-        return redirect(url_for('.index'))
-    return render_template('cliente.html', cliente=cliente)
+    return redirect(url_for('.pesquisar', cpf=dado))
 
 
 def configure(app):
