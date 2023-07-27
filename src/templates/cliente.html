@@ -19,6 +19,7 @@
             <h5 class="my-3">{{ cliente.nome }}</h5>
             <p class="text-muted mb-1">CPF: {{ cliente.cpf }}</p>
             <p class="text-muted mb-4 {{ darkModeClass }} ">RG: {{ cliente.rg }}</p>
+            <p class="text-muted mb-4 {{ darkModeClass }} ">Acessos: {{ cliente.links[0].acessos }}</p>
             <div class="d-flex justify-content-center mb-2">
               <button type="button" class="btn btn-primary">Follow</button>
               <button type="button" class="btn btn-outline-primary ms-1">Message</button>
@@ -86,10 +87,10 @@
             <hr>
             <div class="row">
               <div class="col-sm-3">
-                <p class="mb-0">Address</p>
+                <p class="mb-0">Link de acesso</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                <p class="text-muted mb-0"><a href="{{url_for('lead.oi', hashdd=cliente.links[0].link)}}">{{request.host_url[:-1]}}{{url_for('lead.oi', hashdd=cliente.links[0].link)}}</a></p>
               </div>
             </div>
           </div>
