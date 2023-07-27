@@ -29,6 +29,7 @@ def vender():
 
 
 @views.get('/cliente/<cpf>')
+@login_required
 def pesquisar(cpf):
     cliente = Cliente.query.filter_by(cpf=cpf).first()
     if not cliente:
@@ -38,10 +39,17 @@ def pesquisar(cpf):
 
 
 @views.post('/cliente/')
+@login_required
 def pesquisar_post():
     dado = request.form.get('cpf').replace('.', '').replace('-', '').replace('(', '').replace(')', '')
     return redirect(url_for('.pesquisar', cpf=dado))
 
+
+@views.get('/clientes')
+@login_required
+def clientes():
+    cliente = Cliente.query.filter_by(cpf='4444444444').first()
+    return render_template('clientes.html', clientes=[cliente])
 
 def configure(app):
     app.register_blueprint(views)
