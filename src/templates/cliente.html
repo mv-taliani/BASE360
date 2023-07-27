@@ -23,10 +23,16 @@
               <button type="button" class="btn btn-primary">Follow</button>
               <button type="button" class="btn btn-outline-primary ms-1">Message</button>
             </div>
+            {% block ver_permissoes %}
+            <div id="propostas" hx-target="this" hx-swap="outerHTML">
               <h5>Propostas</h5>
               {% for i in cliente.links[0].propostas %}
-              <p style="color: orange;">{{ i.nome }}</p>
+              <p style="color: orange;"><i class="ti ti-chevron-right"></i>
+{{ i.nome }}</p>
               {% endfor %}
+              <button hx-get="{{url_for('api.permissoes', id=cliente.id)}}" >Editar Permissões</button>
+              </div>
+            {% endblock %}
           </div>
         </div>
       </div>

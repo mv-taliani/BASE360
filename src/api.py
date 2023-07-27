@@ -1,5 +1,6 @@
 from flask import Blueprint, make_response, request, current_app, render_template, url_for
 from flask_login import login_required
+from jinja2_fragments.flask import render_block
 from src.forms import link_form_builder
 from src.models import Links, Cliente, Propostas
 
@@ -32,6 +33,25 @@ def gerar_link():
     resposta = make_response(render_template('htmx/link_form.html', form=form, link=request.host_url + url))
     resposta.headers['HX-Retarget'] = '#formProposta'
     return resposta
+
+
+@api.get('/permissoes/<id>')
+@login_required
+def permissoes(id):
+    cliente = Cliente.query.get(id)
+    form = link_form_builder('FIP FIM FIS FIE FIV PAM PAE PIEDU'.split(), **{prop.nome.upper(): True for prop in cliente.links[0].propostas})
+    return render_template('htmx/form_permissoes.html', cliente=cliente, form=form)
+
+
+@api.post('/editar/permissoes/<id>')
+@login_required
+def editar_permissoes(id):
+    cliente = Cliente.query.get(id)
+    alterar = request.form.getlist('check')
+    props = [Propostas(nome=nome) for nome in alterar]
+    cliente.links[0].propostas = props
+    current_app.db.session.commit()
+    return render_block('cliente.html', 'ver_permissoes', cliente=cliente)
 
 def configure(app):
     app.register_blueprint(api, url_prefix='/api')
