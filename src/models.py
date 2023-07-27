@@ -29,6 +29,7 @@ class Cliente(db.Model):
     email = db.Column(db.String(50))
     cpf = db.Column(db.String(20), index=True, unique=True)
     rg = db.Column(db.String(20), unique=True)
+    cadastrado = db.Column(db.DateTime(timezone=False), default=db.func.now())
 
     def __repr__(self):
         return f'Cliente: {self.cpf}'
@@ -119,7 +120,7 @@ class Links(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
     criada = db.Column(db.DateTime(timezone=False), default=db.func.now())
     link = db.Column(db.String)
-    acessos = db.Column(db.Integer)
+    acessos = db.Column(db.Integer, default=0)
 
     cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
 

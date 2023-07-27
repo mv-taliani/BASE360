@@ -12,8 +12,9 @@ def get_cliente(endpoint, values):
     # if not id:
     #     return abort(404)
     link = Links.query.get_or_404(id[0])
+    link.acessos += 1
     g.cliente = link.cliente
-
+    current_app.db.session.commit()
 
 @lead.get('/')
 def oi():
@@ -21,4 +22,4 @@ def oi():
 
 
 def configure(app):
-    app.register_blueprint(lead, url_prefix='/<hashdd>')
+    app.register_blueprint(lead, url_prefix='/vip/<hashdd>')

@@ -65,12 +65,12 @@ class LinkFormBase(FlaskForm):
     #     return True
 
 
-def link_form_builder(servicos):
+def link_form_builder(servicos, **kwargs):
     class LinkForm(LinkFormBase):
-        pass
+        ...
     for i, servico in enumerate(servicos):
         setattr(LinkForm, f'{servico}', BooleanField(label=str(servico).upper(), name='check'))
-    return LinkForm()
+    return LinkForm(**kwargs)
 
 # class VendaMixinForm(ClienteForm, EnderecoForm, PropostaForm):
 #     ...

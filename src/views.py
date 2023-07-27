@@ -29,20 +29,30 @@ def vender():
 
 
 @views.get('/cliente/<cpf>')
+@login_required
 def pesquisar(cpf):
     cliente = Cliente.query.filter_by(cpf=cpf).first()
+    if not cliente:
+        flash('Não encontrado', 'danger')
+        return redirect(url_for('.vender'))
     return render_template('cliente.html', cliente=cliente)
 
 
 @views.post('/cliente/')
+@login_required
 def pesquisar_post():
     dado = request.form.get('cpf').replace('.', '').replace('-', '').replace('(', '').replace(')', '')
-    cliente = Cliente.query.filter((Cliente.cpf == dado)).first()
-    if not cliente:
-        flash('Não encontrado', 'danger')
-        return redirect(url_for('.index'))
-    return render_template('cliente.html', cliente=cliente)
+    return redirect(url_for('.pesquisar', cpf=dado))
 
+
+@views.get('/clientes')
+@login_required
+def clientes():
+    cliente = Cliente.query.all()
+    if not cliente:
+        flash('Você ainda não possui clientes!', 'primary')
+        return redirect(url_for('views.vender'))
+    return render_template('clientes.html', clientes=cliente)
 
 def configure(app):
     app.register_blueprint(views)

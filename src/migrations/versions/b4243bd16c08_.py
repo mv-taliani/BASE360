@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 815ac1ecc87b
+Revision ID: b4243bd16c08
 Revises: 
-Create Date: 2023-07-19 12:19:23.050542
+Create Date: 2023-07-27 15:44:44.329253
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '815ac1ecc87b'
+revision = 'b4243bd16c08'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -37,22 +37,18 @@ def upgrade():
         batch_op.create_index(batch_op.f('ix_canal_da_venda_id'), ['id'], unique=False)
 
     op.create_table('cliente',
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('nome', sa.String(length=60), nullable=True),
     sa.Column('nasc', sa.Date(), nullable=True),
     sa.Column('email', sa.String(length=50), nullable=True),
     sa.Column('cpf', sa.String(length=20), nullable=True),
     sa.Column('rg', sa.String(length=20), nullable=True),
-    sa.Column('cep', sa.String(length=8), nullable=True),
-    sa.Column('uf', sa.String(length=2), nullable=True),
-    sa.Column('cidade', sa.String(), nullable=True),
-    sa.Column('bairro', sa.String(), nullable=True),
-    sa.Column('rua', sa.String(), nullable=True),
-    sa.Column('numero', sa.Integer(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('cadastrado', sa.DateTime(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('rg')
     )
     with op.batch_alter_table('cliente', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_cliente_cpf'), ['cpf'], unique=False)
+        batch_op.create_index(batch_op.f('ix_cliente_cpf'), ['cpf'], unique=True)
         batch_op.create_index(batch_op.f('ix_cliente_id'), ['id'], unique=False)
 
     op.create_table('forma_pagamento',
@@ -73,16 +69,14 @@ def upgrade():
     with op.batch_alter_table('origem', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_origem_id'), ['id'], unique=False)
 
-    op.create_table('produto',
+    op.create_table('propostas',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome', sa.String(length=50), nullable=True),
-    sa.Column('valor', sa.Numeric(precision=8, scale=2), nullable=True),
-    sa.Column('custo', sa.Numeric(precision=8, scale=2), nullable=True),
     sa.Column('ativo', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    with op.batch_alter_table('produto', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_produto_id'), ['id'], unique=False)
+    with op.batch_alter_table('propostas', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_propostas_id'), ['id'], unique=False)
 
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -93,6 +87,47 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
+    op.create_table('endereco',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('cep', sa.String(length=8), nullable=True),
+    sa.Column('uf', sa.String(length=2), nullable=True),
+    sa.Column('cidade', sa.String(), nullable=True),
+    sa.Column('bairro', sa.String(), nullable=True),
+    sa.Column('rua', sa.String(), nullable=True),
+    sa.Column('numero', sa.Integer(), nullable=True),
+    sa.Column('cliente_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['cliente_id'], ['cliente.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('endereco', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_endereco_id'), ['id'], unique=False)
+
+    op.create_table('links',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('criada', sa.DateTime(), nullable=True),
+    sa.Column('link', sa.String(), nullable=True),
+    sa.Column('acessos', sa.Integer(), nullable=True),
+    sa.Column('cliente_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['cliente_id'], ['cliente.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('links', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_links_id'), ['id'], unique=False)
+
+    op.create_table('pagamento',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('data_pagamento', sa.DateTime(), nullable=True),
+    sa.Column('data_validade', sa.Date(), nullable=True),
+    sa.Column('valor', sa.Numeric(precision=8, scale=2), nullable=True),
+    sa.Column('formapagamento_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['formapagamento_id'], ['forma_pagamento.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('pagamento', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_pagamento_data_pagamento'), ['data_pagamento'], unique=False)
+        batch_op.create_index(batch_op.f('ix_pagamento_data_validade'), ['data_validade'], unique=False)
+        batch_op.create_index(batch_op.f('ix_pagamento_id'), ['id'], unique=False)
+
     op.create_table('telefone',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('telefone', sa.String(length=13), nullable=True),
@@ -104,71 +139,42 @@ def upgrade():
         batch_op.create_index(batch_op.f('ix_telefone_id'), ['id'], unique=False)
         batch_op.create_index(batch_op.f('ix_telefone_telefone'), ['telefone'], unique=False)
 
-    op.create_table('venda',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('desconto', sa.Numeric(precision=8, scale=2), nullable=True),
-    sa.Column('total', sa.Numeric(precision=8, scale=2), nullable=True),
-    sa.Column('data', sa.DateTime(), nullable=True),
-    sa.Column('cliente_id', sa.Integer(), nullable=False),
-    sa.Column('telefone_id', sa.Integer(), nullable=False),
-    sa.Column('produto_id', sa.Integer(), nullable=False),
-    sa.Column('origem_id', sa.Integer(), nullable=False),
-    sa.Column('campanha_id', sa.Integer(), nullable=False),
-    sa.Column('canaldavenda_id', sa.Integer(), nullable=False),
-    sa.Column('vendedor_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['campanha_id'], ['campanha.id'], ),
-    sa.ForeignKeyConstraint(['canaldavenda_id'], ['canal_da_venda.id'], ),
-    sa.ForeignKeyConstraint(['cliente_id'], ['cliente.id'], ),
-    sa.ForeignKeyConstraint(['origem_id'], ['origem.id'], ),
-    sa.ForeignKeyConstraint(['produto_id'], ['produto.id'], ),
-    sa.ForeignKeyConstraint(['telefone_id'], ['telefone.id'], ),
-    sa.ForeignKeyConstraint(['vendedor_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    op.create_table('links_e_props',
+    sa.Column('link_id', sa.Integer(), nullable=True),
+    sa.Column('proposta_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['link_id'], ['links.id'], ),
+    sa.ForeignKeyConstraint(['proposta_id'], ['propostas.id'], )
     )
-    with op.batch_alter_table('venda', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_venda_id'), ['id'], unique=False)
-
-    op.create_table('pagamento',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('data_pagamento', sa.DateTime(), nullable=True),
-    sa.Column('data_validade', sa.Date(), nullable=True),
-    sa.Column('valor', sa.Numeric(precision=8, scale=2), nullable=True),
-    sa.Column('venda_id', sa.Integer(), nullable=False),
-    sa.Column('formapagamento_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['formapagamento_id'], ['forma_pagamento.id'], ),
-    sa.ForeignKeyConstraint(['venda_id'], ['venda.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    with op.batch_alter_table('pagamento', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_pagamento_data_pagamento'), ['data_pagamento'], unique=False)
-        batch_op.create_index(batch_op.f('ix_pagamento_data_validade'), ['data_validade'], unique=False)
-        batch_op.create_index(batch_op.f('ix_pagamento_id'), ['id'], unique=False)
-
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('links_e_props')
+    with op.batch_alter_table('telefone', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_telefone_telefone'))
+        batch_op.drop_index(batch_op.f('ix_telefone_id'))
+
+    op.drop_table('telefone')
     with op.batch_alter_table('pagamento', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_pagamento_id'))
         batch_op.drop_index(batch_op.f('ix_pagamento_data_validade'))
         batch_op.drop_index(batch_op.f('ix_pagamento_data_pagamento'))
 
     op.drop_table('pagamento')
-    with op.batch_alter_table('venda', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_venda_id'))
+    with op.batch_alter_table('links', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_links_id'))
 
-    op.drop_table('venda')
-    with op.batch_alter_table('telefone', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_telefone_telefone'))
-        batch_op.drop_index(batch_op.f('ix_telefone_id'))
+    op.drop_table('links')
+    with op.batch_alter_table('endereco', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_endereco_id'))
 
-    op.drop_table('telefone')
+    op.drop_table('endereco')
     op.drop_table('users')
-    with op.batch_alter_table('produto', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_produto_id'))
+    with op.batch_alter_table('propostas', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_propostas_id'))
 
-    op.drop_table('produto')
+    op.drop_table('propostas')
     with op.batch_alter_table('origem', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_origem_id'))
 

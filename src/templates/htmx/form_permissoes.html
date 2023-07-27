@@ -1,0 +1,12 @@
+<form class="form-group checkboxes-container" hx-post="{{url_for('api.editar_permissoes', id=cliente.id)}}"
+      hx-target="this" hx-swap="outerHTML" style="display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;">
+  {{ form.hidden_tag() }}
+  {% for field in form if field.name not in ['cpf', 'csrf_token']%}
+  {{ field(value=field.label.text) }}
+  {{ field.label }}
+  {% endfor %}
+
+  <button type="submit">Confirmar</button>
+</form>
