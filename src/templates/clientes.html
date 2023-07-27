@@ -4,8 +4,17 @@
 
 {% block content %}
     <h3 style="text-align: center;">Clientes</h3>
-
 {% for cliente in clientes %}
-{{ gerar_card(cliente) }}
+{% if loop.index % 2 != 0  %}
+    <hr>
+    <div class="container">
+      <div class="row d-flex justify-content-center align-items-center">
+        {{ gerar_card(cliente) }}
+
+{% else %}
+        {{ gerar_card(cliente) }}
+      </div>
+    </div>
+{% endif %}
 {% endfor %}
 {% endblock %}

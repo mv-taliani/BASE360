@@ -29,6 +29,7 @@ class Cliente(db.Model):
     email = db.Column(db.String(50))
     cpf = db.Column(db.String(20), index=True, unique=True)
     rg = db.Column(db.String(20), unique=True)
+    cadastrado = db.Column(db.DateTime(timezone=False), default=db.func.now())
 
     def __repr__(self):
         return f'Cliente: {self.cpf}'
