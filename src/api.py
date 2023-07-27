@@ -54,5 +54,6 @@ def editar_permissoes(id):
     current_app.db.session.commit()
     return render_block('cliente.html', 'ver_permissoes', cliente=cliente)
 
+
 def configure(app):
     app.register_blueprint(api, url_prefix='/api')

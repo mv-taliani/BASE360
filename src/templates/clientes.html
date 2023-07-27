@@ -1,0 +1,11 @@
+{% extends 'sidebar.html'%}
+{% from '_cliente_card.html' import gerar_card %}
+
+
+{% block content %}
+    <h3 style="text-align: center;">Clientes</h3>
+
+{% for cliente in clientes %}
+{{ gerar_card(cliente) }}
+{% endfor %}
+{% endblock %}
