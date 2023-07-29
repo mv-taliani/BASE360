@@ -1,0 +1,9 @@
+
+
+<form hx-post="{{ url_for('api.proponente') }}" hx-target="this" hx-swap="outerHTML" class="">
+  <div class="Proponente">
+    <div class="col-md-12">
+      {{ prop_form.proponente(class="form-control text-center", placeholder="Proponente") }}
+    </div>
+  </div>
+</form>

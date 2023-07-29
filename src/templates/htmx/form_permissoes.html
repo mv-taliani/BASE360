@@ -3,10 +3,10 @@
     justify-content: space-between;
     flex-wrap: wrap;">
   {{ form.hidden_tag() }}
-  {% for field in form if field.name not in ['cpf', 'csrf_token']%}
+  {% for field in form if field.name not in ['cpf', 'csrf_token', 'nome', 'telefone']%}
   {{ field(value=field.label.text) }}
   {{ field.label }}
   {% endfor %}
 
-  <button type="submit">Confirmar</button>
+  <button type="submit" class="btn btn-primary" style="background-color: #ffa500; border-color: #ffa500;">Confirmar</button>
 </form>

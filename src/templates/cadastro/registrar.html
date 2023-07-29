@@ -1,0 +1,32 @@
+{% extends 'etapas.html' %}
+
+{% block content %}
+<form hx-post="{{ url_for('api.logar') }}" hx-target="this" hx-swap="outerHTML" class="form-group">
+  {{ reg_form.hidden_tag() }}
+  <h3>Vamos lá?</h3>
+  <div class="col-md-12">
+    {{ reg_form.cpf(class="form-control text-center", placeholder="CPF") }}
+    {{ render_error(reg_form.cpf) }}
+  </div>
+  <br>
+  <div>
+    <div class="col-md-12">
+      {{ reg_form.senha(class="form-control text-center", placeholder="Senha") }}
+      {{ render_error(reg_form.senha) }}
+    </div>
+  </div>
+  <br>
+  <div>
+    <div class="col-md-12">
+      {{ reg_form.confirmar_senha(class="form-control text-center", placeholder="Confirme a senha") }}
+      {{ render_error(reg_form.confirmar_senha) }}
+    </div>
+  </div>
+  <br>
+
+  <div class="php-email-form">
+    <div class="text-center"><button type="submit">GERAR SENHA</button></div>
+  </div>
+  <br>
+</form>
+{% endblock %}

@@ -22,15 +22,17 @@ class Users(db.Model, UserMixin):
         return f'User {self.nome}'
 
 
-class Cliente(db.Model):
-    id = db.Column(db.Integer, primary_key=True, index=True, autoincrement=True)
+class Cliente(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True, index=True)
     nome = db.Column(db.String(60))
     nasc = db.Column(db.Date)
     email = db.Column(db.String(50))
     cpf = db.Column(db.String(20), index=True, unique=True)
     rg = db.Column(db.String(20), unique=True)
     cadastrado = db.Column(db.DateTime(timezone=False), default=db.func.now())
+    senha = db.Column(db.String)
 
+    vendedor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     def __repr__(self):
         return f'Cliente: {self.cpf}'
 
@@ -104,6 +106,7 @@ class Pagamento(db.Model):
 class Propostas(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
     nome = db.Column(db.String(50))
+    sobre = db.Column(db.String)
     ativo = db.Column(db.Boolean, default=False)
 
     def __str__(self):

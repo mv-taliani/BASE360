@@ -1,8 +1,11 @@
-from flask import Blueprint, current_app, g, abort
+from flask import Blueprint, current_app, g, render_template, redirect, url_for
+from flask_login import current_user
 from src.models import Links
-
+from src.forms import ClienteRegis, ProponenteForm
+from src.oportunidades import configure as configure_oportunidade
 
 lead = Blueprint('lead', __name__)
+configure_oportunidade(lead)
 
 
 @lead.url_value_preprocessor
@@ -16,9 +19,19 @@ def get_cliente(endpoint, values):
     g.cliente = link.cliente
     current_app.db.session.commit()
 
+
 @lead.get('/')
 def oi():
-    return f'{g.cliente.cpf}'
+    # if not g.cliente.senha:
+    #     return render_template('cadastro/registrar.html', reg_form=reg_form)
+    # try:
+    #     cpf = current_user.cpf
+    #     if cpf == g.cliente.cpf:
+    #         return render_template('catalogo.html')
+    # except:
+    #     return 'oi'
+    reg_form = ClienteRegis()
+    return render_template('cadastro/registrar.html', reg_form=reg_form)
 
 
 def configure(app):
