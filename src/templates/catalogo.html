@@ -1,0 +1,32 @@
+<html>
+<head>
+{% include '_header.html' %}
+</head>
+<body>
+            <div class="body-wrapper">
+                      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xl-12">
+            <div class="card">
+              <div class="card-body">
+                <h3 style="text-align:center;">Oportunidades</h3>
+                  <hr>
+{% for proposta in g.cliente.links[0].propostas %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ proposta.nome }}</h5>
+        <p class="card-text">{{ proposta.sobre }}</p>
+        <button type="button" class="btn btn-primary" style="background-color: #ffa500; border-color: #ffa500;">
+            <a style="color: white;" href="{{ url_for('lead.oportunidades.index', hashdd=g.cliente.links[0].link, oportunidade=proposta.nome) }}">Assinar</a>
+        </button>
+    </div>
+</div>
+                  {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

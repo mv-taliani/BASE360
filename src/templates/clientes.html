@@ -3,11 +3,11 @@
 
 
 {% block content %}
-    <h3 style="text-align: center;">Clientes</h3>
+    <h3 style="text-align: center;">Clientes - {{ clientes|length }}</h3>
 {% for cliente in clientes %}
 {% if loop.index % 2 != 0  %}
     <hr>
-    <div class="container">
+    <div class="container" style="margin: 1%;">
       <div class="row d-flex justify-content-center align-items-center">
         {{ gerar_card(cliente) }}
 

@@ -7,6 +7,16 @@
     <div class="row">
       <div class="col-md-20">
         <div class="form-group">
+          {{ form.nome(class="entrada form-control text-center", placeholder=form.nome.label.text) }}
+          {% for erro in form.nome.errors %}
+          <span id="nome-error" class="error-message"> {{erro}} </span><br>
+          {% endfor %}
+<br>
+          {{ form.telefone(class="entrada form-control text-center", placeholder='Telefone') }}
+          {% for erro in form.telefone.errors %}
+          <span id="telefone-error" class="error-message"> {{erro}} </span>
+          {% endfor %}
+                      <br>
           {{ form.cpf(class="entrada form-control text-center", placeholder=form.cpf.label.text, required=True) }}
           {% for erro in form.cpf.errors %}
           <span id="cpf-error" class="error-message"> {{erro}} </span><br>
@@ -19,7 +29,7 @@
       <br>
       <div class="col-md-6">
         <div class="form-group checkboxes-container">
-          {% for field in form if field.name not in ['cpf', 'csrf_token'] %}
+          {% for field in form if field.name not in ['cpf', 'csrf_token', 'nome', 'telefone'] %}
 
           <div>
             {{ field(value=field.label.text.lower()) }}

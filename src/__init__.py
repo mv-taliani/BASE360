@@ -8,7 +8,7 @@ from src.views import configure as views_config
 from src.models import configure as db_config
 from src.adm import configure as adm_config
 from src.api import configure as api_config
-from src.models import Users
+from src.models import Users, Cliente
 from src.cliente import configure as cliente_config
 
 
@@ -29,7 +29,11 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(id_):
-        return Users.query.get(int(id_))
+        return Users.query.get(int(id_)) or Cliente.query.get(int(id_))
+
+    login_manager.blueprint_login_views = {
+        'lead': '/<hashdd>/',
+    }
 
     app.htmx = HTMX(app)
     hashids = Hashids(min_length=4, salt=app.config['SECRET_KEY'])

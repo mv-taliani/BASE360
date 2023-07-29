@@ -16,7 +16,6 @@ def index():
 @login_required
 def vender():
     servicos = 'FIP FIM FIS FIE FIV PAM PAE PIEDU'.split()
-    print(list(request.form.items()))
     form = link_form_builder(servicos)
     return render_template('cadproposta.html', form=form)
 
@@ -53,6 +52,7 @@ def clientes():
         flash('Você ainda não possui clientes!', 'primary')
         return redirect(url_for('views.vender'))
     return render_template('clientes.html', clientes=cliente)
+
 
 def configure(app):
     app.register_blueprint(views)
