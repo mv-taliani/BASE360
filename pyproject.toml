@@ -23,6 +23,8 @@ flask-htmx = "^0.3.1"
 pydantic-br = "^0.4.0"
 jinja2-fragments = "^0.3.0"
 pydantic = "^1.10.7"
+pdfkit = "^1.0.0"
+flask-excel = "^0.0.7"
 
 
 [build-system]
