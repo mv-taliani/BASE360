@@ -31,7 +31,9 @@ def oi():
     # except:
     #     return 'oi'
     reg_form = ClienteRegis()
-    return render_template('cadastro/registrar.html', reg_form=reg_form)
+    return render_template('catalogo.html')
+
+    # return render_template('cadastro/registrar.html', reg_form=reg_form)
 
 
 def configure(app):

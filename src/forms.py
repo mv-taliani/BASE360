@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField, BooleanField, StringField, DateField, IntegerField, SelectField
+from wtforms import EmailField, PasswordField, BooleanField, StringField, DateField, IntegerField, SelectField, TextAreaField, FloatField
 from wtforms.validators import DataRequired, InputRequired, Length, EqualTo, Email, ValidationError
 from wtforms_sqlalchemy.fields import QuerySelectField
 from pydantic_br import CPF, CNPJ, FieldInvalidError
@@ -90,4 +90,97 @@ def validate_proponente(form, field):
 
 
 class ProponenteForm(FlaskForm):
-    proponente = StringField('Proponente', validators=[InputRequired('Precisamos do proponente!'), validate_proponente])
+    proponente = StringField('Proponente', validators=[InputRequired('Precisamos do proponente!')])
+    responsavel = StringField('Responsável Legal - Se CNPJ')
+    cnpj = StringField('CNPJ')
+    cpf = StringField('CPF', validators=[InputRequired('Precisa do CPF')])
+    endereco = StringField('Endereço (se empresa, deve ser o mesmo do contrato)', validators=[InputRequired('Precisa do endereço')])
+    aporte = StringField('Valor do aporte (total do contrato)', validators=[InputRequired('Precisa do valor')])
+    lote = StringField('Lote de pagamento', validators=[InputRequired('Precisa do lote')])
+
+    def validate(self, extra_validators=None):
+        initial_validation = super(ProponenteForm, self).validate()
+        if not initial_validation:
+            return False
+        if not validar(CNPJ, self.proponente) and not self.responsavel.data:
+            print('batata')
+            self.responsavel.errors.append('CNPJ necessita de um responsável legal!')
+            return False
+        if self.cnpj and validar(CNPJ, self.cnpj):
+            self.cnpj.errors.append('CNPJ inválido!')
+            return False
+        return True
+
+
+def proponente_form(oportunidade):
+    form = ProponenteForm()
+    if oportunidade != "FIP":
+        delattr(form, 'cnpj')
+    return form
+
+
+class Etapa1Form(FlaskForm):
+    identidade = TextAreaField("""Determine a identidade organizacional (Nesta seção, deverá ser fornecida uma visão geral do seu negócio. Assim, precisará considerar aspectos que o tornem único.
+A identidade deve levar como base a Misão, Visão e Valores da empresa)
+Missão: É a razão pela qual a sua empresa existe
+Visão: É onde você quer chegar com a sua empresa pensando em longo prazo
+Valores: São os princípios inegociáveis.""", validators=[InputRequired('Precisamos da sua identidade organizacional')])
+
+
+class Etapa2Form(FlaskForm):
+    analise = TextAreaField("Análise do mercado de atuação do seu negócios. Sobre você e/ou sua empresa se já for "
+                           "estabelecido (A ideia nesta seção é de unificar o mercado que pretende atuar ou já atua com "
+                           "seu projeto, e também falar sobre mercado alvo, tendências, crescimento e vantagens do "
+                           "mercado de atuação)", validators=[InputRequired('Precisamos da análise do mercado')])
+
+
+class Etapa3Form(FlaskForm):
+    objetivos = TextAreaField("Quais são os objetivos de negócio? (Os objetivos de negócios são tudo o que você pretende "
+                           "alcançar com o seu projeto, fale do geral até o específico.)",
+                           validators=[InputRequired('Precisamos dos objetivos do seu negócio')])
+
+
+class Etapa4Form(FlaskForm):
+    swot = TextAreaField("Nessa seção deverá ser preenchido a análise SWOT",
+                           validators=[InputRequired('Precisamos da análise SWOT')])
+
+
+def validate_valor(form, field):
+    try:
+        val = float(field.data)
+        return val
+    except ValueError:
+        raise ValidationError('Deve ser um número separado por ponto')
+
+
+class Etapa5Form(FlaskForm):
+    descricao = TextAreaField('Descrição', validators=[InputRequired('Preencha a descrição')])
+    periodo = StringField('Período', validators=[InputRequired('Preencha o período')])
+    valor = StringField('Valor', validators=[InputRequired('Preencha o valor em R$'), validate_valor])
+    justificativa = StringField('Justificativa', validators=[InputRequired('Preencha a justificativa')])
+
+
+class Etapa6Form(FlaskForm):
+    marketing = TextAreaField("Plano de marketing e estratégias de continuidade do seu projeto (Aqui deverá ser "
+                              "preenchido o planejamento de estratégia para alavancagem do produto/empresa e como sua "
+                              "empresa permanecerá ativa após o término do recurso)",
+                              validators=[InputRequired('Precisamos do plano de marketing!')])
+
+
+class Etapa7Form(FlaskForm):
+    futuro = TextAreaField("Nesta seção deverá ser preenchido o resumo de planos futuros (Se pretende ter algum negócio"
+                           "social e se tem planos de expansão e afins)",
+                           validators=[InputRequired('Precisamos do resumo de planos futuros')])
+
+
+def validate_cnpj(form, field):
+    if not validar(CNPJ, field.data):
+        raise ValidationError('CNPJ inválido')
+
+
+class Etapa8Form(FlaskForm):
+    nome = StringField('Nome', validators=[InputRequired('Precisamos do nome')])
+    cnpj = StringField('CNPJ', validators=[InputRequired('Precisamos do CNPJ'), validate_cnpj])
+    contato = StringField('Contato', validators=[InputRequired('Precisamos do contato')])
+    dados_bancarios = TextAreaField('Dados Bancários', validators=[InputRequired('Precisamos dos dados bancários'),
+                                    Length(min=1, max=100)])

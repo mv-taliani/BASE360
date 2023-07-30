@@ -1,9 +1,19 @@
+{% extends 'etapas.html' %}
 
-
-<form hx-post="{{ url_for('api.proponente') }}" hx-target="this" hx-swap="outerHTML" class="">
+{% block content %}
+{% from '_form_errors.html' import render_error %}
+<form hx-post="{{ alvo }}" hx-target="this" hx-swap="outerHTML" class="">
+  {% include '_flash_alerts.html' %}
   <div class="Proponente">
     <div class="col-md-12">
-      {{ prop_form.proponente(class="form-control text-center", placeholder="Proponente") }}
+      {{ prop_form.hidden_tag() }}
+      {% for field in prop_form if field.name not in ['csrf_token'] %}
+      {{ field(class="form-control text-center", placeholder=field.label.text, required=False) }}
+      {{ render_error(field) }}
+      <br>
+      {% endfor %}
+      <button class="btn btn-primary">Próximo</button>
     </div>
   </div>
 </form>
+{% endblock %}

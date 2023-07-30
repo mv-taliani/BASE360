@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: b4243bd16c08
+Revision ID: 2b27bcc59f1f
 Revises: 
-Create Date: 2023-07-27 15:44:44.329253
+Create Date: 2023-07-29 17:49:50.045850
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b4243bd16c08'
+revision = '2b27bcc59f1f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,21 +36,6 @@ def upgrade():
     with op.batch_alter_table('canal_da_venda', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_canal_da_venda_id'), ['id'], unique=False)
 
-    op.create_table('cliente',
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('nome', sa.String(length=60), nullable=True),
-    sa.Column('nasc', sa.Date(), nullable=True),
-    sa.Column('email', sa.String(length=50), nullable=True),
-    sa.Column('cpf', sa.String(length=20), nullable=True),
-    sa.Column('rg', sa.String(length=20), nullable=True),
-    sa.Column('cadastrado', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('rg')
-    )
-    with op.batch_alter_table('cliente', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_cliente_cpf'), ['cpf'], unique=True)
-        batch_op.create_index(batch_op.f('ix_cliente_id'), ['id'], unique=False)
-
     op.create_table('forma_pagamento',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome', sa.String(length=30), nullable=True),
@@ -72,6 +57,7 @@ def upgrade():
     op.create_table('propostas',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome', sa.String(length=50), nullable=True),
+    sa.Column('sobre', sa.String(), nullable=True),
     sa.Column('ativo', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
@@ -87,6 +73,24 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
+    op.create_table('cliente',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('nome', sa.String(length=60), nullable=True),
+    sa.Column('nasc', sa.Date(), nullable=True),
+    sa.Column('email', sa.String(length=50), nullable=True),
+    sa.Column('cpf', sa.String(length=20), nullable=True),
+    sa.Column('rg', sa.String(length=20), nullable=True),
+    sa.Column('cadastrado', sa.DateTime(), nullable=True),
+    sa.Column('senha', sa.String(), nullable=True),
+    sa.Column('vendedor_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['vendedor_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('rg')
+    )
+    with op.batch_alter_table('cliente', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_cliente_cpf'), ['cpf'], unique=True)
+        batch_op.create_index(batch_op.f('ix_cliente_id'), ['id'], unique=False)
+
     op.create_table('endereco',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('cep', sa.String(length=8), nullable=True),
@@ -114,20 +118,6 @@ def upgrade():
     with op.batch_alter_table('links', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_links_id'), ['id'], unique=False)
 
-    op.create_table('pagamento',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('data_pagamento', sa.DateTime(), nullable=True),
-    sa.Column('data_validade', sa.Date(), nullable=True),
-    sa.Column('valor', sa.Numeric(precision=8, scale=2), nullable=True),
-    sa.Column('formapagamento_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['formapagamento_id'], ['forma_pagamento.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    with op.batch_alter_table('pagamento', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_pagamento_data_pagamento'), ['data_pagamento'], unique=False)
-        batch_op.create_index(batch_op.f('ix_pagamento_data_validade'), ['data_validade'], unique=False)
-        batch_op.create_index(batch_op.f('ix_pagamento_id'), ['id'], unique=False)
-
     op.create_table('telefone',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('telefone', sa.String(length=13), nullable=True),
@@ -145,23 +135,39 @@ def upgrade():
     sa.ForeignKeyConstraint(['link_id'], ['links.id'], ),
     sa.ForeignKeyConstraint(['proposta_id'], ['propostas.id'], )
     )
+    op.create_table('preenchimento',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('proponente', sa.String(length=90), nullable=True),
+    sa.Column('responsavel', sa.String(length=90), nullable=True),
+    sa.Column('cnpj', sa.String(length=19), nullable=True),
+    sa.Column('cpf', sa.String(length=15), nullable=True),
+    sa.Column('endereco', sa.String(), nullable=True),
+    sa.Column('aporte', sa.Numeric(precision=11, scale=2), nullable=True),
+    sa.Column('lote', sa.String(length=13), nullable=True),
+    sa.Column('link_id', sa.Integer(), nullable=False),
+    sa.Column('proposta_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['link_id'], ['links.id'], ),
+    sa.ForeignKeyConstraint(['proposta_id'], ['propostas.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('preenchimento', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_preenchimento_id'), ['id'], unique=False)
+
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    with op.batch_alter_table('preenchimento', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_preenchimento_id'))
+
+    op.drop_table('preenchimento')
     op.drop_table('links_e_props')
     with op.batch_alter_table('telefone', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_telefone_telefone'))
         batch_op.drop_index(batch_op.f('ix_telefone_id'))
 
     op.drop_table('telefone')
-    with op.batch_alter_table('pagamento', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_pagamento_id'))
-        batch_op.drop_index(batch_op.f('ix_pagamento_data_validade'))
-        batch_op.drop_index(batch_op.f('ix_pagamento_data_pagamento'))
-
-    op.drop_table('pagamento')
     with op.batch_alter_table('links', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_links_id'))
 
@@ -170,6 +176,11 @@ def downgrade():
         batch_op.drop_index(batch_op.f('ix_endereco_id'))
 
     op.drop_table('endereco')
+    with op.batch_alter_table('cliente', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_cliente_id'))
+        batch_op.drop_index(batch_op.f('ix_cliente_cpf'))
+
+    op.drop_table('cliente')
     op.drop_table('users')
     with op.batch_alter_table('propostas', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_propostas_id'))
@@ -183,11 +194,6 @@ def downgrade():
         batch_op.drop_index(batch_op.f('ix_forma_pagamento_id'))
 
     op.drop_table('forma_pagamento')
-    with op.batch_alter_table('cliente', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_cliente_id'))
-        batch_op.drop_index(batch_op.f('ix_cliente_cpf'))
-
-    op.drop_table('cliente')
     with op.batch_alter_table('canal_da_venda', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_canal_da_venda_id'))
 
