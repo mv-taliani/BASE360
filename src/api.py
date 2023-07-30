@@ -1,7 +1,7 @@
-from flask import Blueprint, make_response, request, current_app, render_template, url_for, redirect
+from flask import g, Blueprint, make_response, request, current_app, render_template, url_for, redirect
 from flask_login import login_required
 from jinja2_fragments.flask import render_block
-from src.forms import link_form_builder, ClienteRegis, ProponenteForm
+from src.forms import link_form_builder, ClienteRegis, proponente_form
 from src.models import Links, Cliente, Propostas, Telefone
 
 api = Blueprint('api', __name__)
@@ -68,13 +68,6 @@ def logar():
         current_app.db.session.commit()
         return redirect(url_for('api.proponente'), code=307)
     return render_block('registrar.html', 'content', reg_form=form)
-
-
-@api.post('/vip/proponente')
-@login_required
-def proponente():
-    prop_form = ProponenteForm()
-    return render_block('etapas.html', 'proponente', prop_form=prop_form)
 
 
 def configure(app):

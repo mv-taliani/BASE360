@@ -94,15 +94,6 @@ class FormaPagamento(db.Model):
     ativo = db.Column(db.Boolean, default=False)
 
 
-class Pagamento(db.Model):
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    data_pagamento = db.Column(db.DateTime(timezone=False), default=db.func.now(), index=True)
-    data_validade = db.Column(db.Date, index=True)
-    valor = db.Column(db.Numeric(8, 2))
-
-    formapagamento_id = db.Column(db.Integer, db.ForeignKey(FormaPagamento.id), nullable=False)
-
-
 class Propostas(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
     nome = db.Column(db.String(50))
@@ -129,6 +120,52 @@ class Links(db.Model):
 
     cliente = db.relationship('Cliente', backref=db.backref('links', lazy='dynamic'))
     propostas = db.relationship('Propostas', secondary=links_e_props, backref='links')
+
+
+class Preenchimento(db.Model):
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    proponente = db.Column(db.String(90))
+    responsavel = db.Column(db.String(90))
+    cnpj = db.Column(db.String(19))
+    cpf = db.Column(db.String(15))
+    endereco = db.Column(db.String)
+    aporte = db.Column(db.Numeric(11, 2))
+    lote = db.Column(db.String(13))
+    identidade = db.Column(db.String)
+    analise = db.Column(db.String)
+    objetivos = db.Column(db.String)
+    swot = db.Column(db.String)
+    marketing = db.Column(db.String)
+    futuro = db.Column(db.String)
+
+    link_id = db.Column(db.Integer, db.ForeignKey(Links.id), nullable=False)
+    proposta_id = db.Column(db.Integer, db.ForeignKey(Propostas.id), nullable=False)
+
+    links = db.relationship('Links', backref=db.backref('preenchimentos', lazy='dynamic'))
+    propostas = db.relationship('Propostas', backref=db.backref('preenchimentos', lazy='dynamic'))
+
+
+class Instituição(db.Model):
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    nome = db.Column(db.String(100))
+    cnpj = db.Column(db.String(19))
+    contato = db.Column(db.String(50))
+    dados_bancarios = db.Column(db.String(100))
+
+    preenchimento_id = db.Column(db.Integer, db.ForeignKey(Preenchimento.id), nullable=False)
+
+    preenchimentos = db.relationship('Preenchimento', backref=db.backref('insituicao', lazy='dynamic'))
+
+class Detalhes(db.Model):
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    descricao = db.Column(db.String)
+    periodo = db.Column(db.String(50))
+    valor = db.Column(db.Numeric(10, 2))
+    justificativa = db.Column(db.String(200))
+
+    preenchimento_id = db.Column(db.Integer, db.ForeignKey(Preenchimento.id), nullable=False)
+
+    preenchimento = db.relationship('Preenchimento', backref=db.backref('detalhes', lazy='dynamic'))
 
 
 def configure(app):

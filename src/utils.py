@@ -19,3 +19,9 @@ def somente_cliente(func):
         return current_app.login_manager.unauthorized()
     return inner
 
+
+def atualizar_preenchimento(form, model):
+    for key, value in form.data.items():
+        if key != 'csrf_token':
+            setattr(model, key, value)
+
