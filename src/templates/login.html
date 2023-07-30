@@ -28,7 +28,6 @@
             <div class="card mb-0">
               <div class="card-body">
                   <img src= "{{ url_for('static', filename='images/logos/base360.png') }}"style="width: 40%; margin: auto; display: block;">
-                <p class="text-center">Que seu dia seja abençoado</p>
                     {% include '_flash_alerts.html' %}
                 <form action="{{ url_for('auth.login_post') }}" method="POST">
                         {{ form.hidden_tag() }}
@@ -47,8 +46,7 @@
                     </div>
                     <br>
                   </div>
-
-                    <input type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">
+                    <input type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2" style="color: black; background-color: orange;">
                   </div>
                   </div>
                 </form>
@@ -59,14 +57,7 @@
       </div>
     </div>
   </div>
-  <script src= {{ url_for('static', filename="js/vendor.min.js") }} ></script>
-  <script src= {{ url_for('static', filename="js/app.min.js") }} ></script>
-  <script src= {{ url_for('static', filename="libs/jquery/dist/jquery.min.js") }} ></script>
-  <script src= {{ url_for('static', filename="libs/bootstrap/dist/js/bootstrap.bundle.min.js") }} ></script>
-  <script src= {{ url_for('static', filename="js/sidebarmenu.js") }} ></script>
-  <script src= {{ url_for('static', filename="js/app.min.js") }} ></script>
-  <script src= {{ url_for('static', filename="libs/apexcharts/dist/apexcharts.min.js") }} ></script>
-  <script src= {{ url_for('static', filename="libs/simplebar/dist/simplebar.js") }} ></script>
+
 </body>
 
 </html>

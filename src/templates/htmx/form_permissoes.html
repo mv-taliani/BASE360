@@ -1,7 +1,8 @@
 <form class="form-group checkboxes-container" hx-post="{{url_for('api.editar_permissoes', id=cliente.id)}}"
       hx-target="this" hx-swap="outerHTML" style="display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;">
+    flex-wrap: wrap;
+    flex-direction: column;">
   {{ form.hidden_tag() }}
   {% for field in form if field.name not in ['cpf', 'csrf_token', 'nome', 'telefone']%}
   {{ field(value=field.label.text) }}
