@@ -16,9 +16,15 @@
     <div class="card-body">
         <h5 class="card-title">{{ proposta.nome }}</h5>
         <p class="card-text">{{ proposta.sobre }}</p>
+        {% for preenchimento in proposta.preenchimentos %}
+        {% if preenchimento.preenchido %}
+        <i class="ti ti-check"></i>
+        {% else %}
         <button type="button" class="btn btn-primary" style="background-color: #ffa500; border-color: #ffa500;">
             <a style="color: white;" href="{{ url_for('lead.oportunidades.index', hashdd=g.cliente.links[0].link, oportunidade=proposta.nome) }}">Assinar</a>
         </button>
+        {% endif %}
+        {% endfor %}
     </div>
 </div>
                   {% endfor %}
