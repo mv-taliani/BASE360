@@ -89,14 +89,22 @@ def validate_proponente(form, field):
         raise ValidationError('CPF ou CNPJ inválido!')
 
 
+def validate_valor(form, field):
+    try:
+        val = float(field.data)
+        return val
+    except ValueError:
+        raise ValidationError('Deve ser um número separado por ponto')
+
+
 class ProponenteForm(FlaskForm):
     proponente = StringField('Proponente', validators=[InputRequired('Precisamos do proponente!')])
     responsavel = StringField('Responsável Legal - Se CNPJ')
     cnpj = StringField('CNPJ')
-    cpf = StringField('CPF', validators=[InputRequired('Precisa do CPF')])
-    endereco = StringField('Endereço (se empresa, deve ser o mesmo do contrato)', validators=[InputRequired('Precisa do endereço')])
-    aporte = StringField('Valor do aporte (total do contrato)', validators=[InputRequired('Precisa do valor')])
-    lote = StringField('Lote de pagamento', validators=[InputRequired('Precisa do lote')])
+    cpf = StringField('CPF', validators=[InputRequired('Precisamos do CPF')])
+    endereco = StringField('Endereço (se empresa, deve ser o mesmo do contrato)', validators=[InputRequired('Precisamos do endereço')])
+    aporte = StringField('Valor do aporte (total do contrato)', validators=[InputRequired('Precisamos do valor'), validate_valor])
+    lote = StringField('Lote de pagamento', validators=[InputRequired('Precisamos do lote')])
 
     def validate(self, extra_validators=None):
         initial_validation = super(ProponenteForm, self).validate()
@@ -144,13 +152,6 @@ class Etapa4Form(FlaskForm):
     swot = TextAreaField("Nessa seção deverá ser preenchido a análise SWOT",
                            validators=[InputRequired('Precisamos da análise SWOT')])
 
-
-def validate_valor(form, field):
-    try:
-        val = float(field.data)
-        return val
-    except ValueError:
-        raise ValidationError('Deve ser um número separado por ponto')
 
 
 class Etapa5Form(FlaskForm):

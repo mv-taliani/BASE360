@@ -95,19 +95,19 @@ def etapa4():
 def etapa5():
     prop_form = Etapa5Form()
     alvo = url_for('lead.oportunidades.etapa5_add', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
-    if g.preenchimento.detalhes:
+    if [i for i in g.preenchimento.detalhes]:
         alvo2 = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
     else:
         alvo2 = None
 
-    return render_template('cadastro/tabela.html', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
+    return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
 
 
 @oportunidades.post('/etapa5_add')
 def etapa5_add():
     prop_form = Etapa5Form()
     alvo = url_for('lead.oportunidades.etapa5_add', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
-    if g.preenchimento.detalhes:
+    if [i for i in g.preenchimento.detalhes]:
         alvo2 = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
     else:
         alvo2 = None
@@ -152,8 +152,9 @@ def etapa8():
     if current_app.htmx:
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
+            g.preenchimento.preenchido = True
             current_app.db.session.commit()
-            return redirect(url_for('.etapa8', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
+            return redirect(url_for('lead.index', hashdd=g.cliente.links[0].link))
         flash("Nesta seção deverá ser preenchido a contrapartida social (Ou seja, dos 10% da verba destina ao CANS, 5% "
               "ficará para o CANS e os demais serão destinados a instituição descrita abaixo) -  Descreva a instituição",
               'primary')

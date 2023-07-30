@@ -1,7 +1,10 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
 from flask_login import login_required
+import pdfkit
+import flask_excel
 from src.forms import link_form_builder
-from src.models import Cliente
+from src.models import Cliente, Preenchimento, Propostas
+
 
 views = Blueprint('views', __name__)
 
@@ -52,6 +55,13 @@ def clientes():
         flash('Você ainda não possui clientes!', 'primary')
         return redirect(url_for('views.vender'))
     return render_template('clientes.html', clientes=cliente)
+
+
+# @views.get('/cliente/contrato/<cpf>/<proposta>.pdf')
+# def contrato(cpf, proposta):
+#     # preenchimento = Preenchimento.query.join(Propostas).filter_by(nome=proposta).join(Cliente).filter_by(cpf=cpf).first()
+#     # return render_template('pdf.html')
+#     return flask_excel.make_response_from_a_table(current_app.db.session, Cliente, 'xlsx', file_name='teste')
 
 
 def configure(app):

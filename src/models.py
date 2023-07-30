@@ -137,6 +137,7 @@ class Preenchimento(db.Model):
     swot = db.Column(db.String)
     marketing = db.Column(db.String)
     futuro = db.Column(db.String)
+    preenchido = db.Column(db.Boolean, default=False)
 
     link_id = db.Column(db.Integer, db.ForeignKey(Links.id), nullable=False)
     proposta_id = db.Column(db.Integer, db.ForeignKey(Propostas.id), nullable=False)
