@@ -20,7 +20,8 @@ def somente_cliente(func):
         try:
             if current_user.cpf == g.cliente.cpf:
                 return func(*args, **kwargs)
-        except:
+        except Exception as e:
+            print(e)
             return abort(404)
     return inner
 
