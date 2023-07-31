@@ -18,7 +18,7 @@ def create_app():
     app = Flask(__name__)
     FlaskDynaconf(app)
     app.config['SECRET_KEY'] = '230894ruw2ru9wuef9aue90fu90fuwdufisdou9sdufwpwe9fw04r9sdposdçflj'
-    app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///testeteste.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///inferno.db'
     db_config(app)
     app.config['DEBUG_TB_TEMPLATE_EDITOR_ENABLED'] = True
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
