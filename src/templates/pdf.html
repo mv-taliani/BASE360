@@ -1,5 +1,68 @@
-{% extends 'etapas.html' %}
-{% block content %}
-
-
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulário de Preenchimento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: orange;
+            color: black;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formulário de Preenchimento</h1>
+    <table>
+        <tr>
+            <th>Proponente</th>
+            <th>Responsável</th>
+            <th>CNPJ</th>
+            <th>CPF</th>
+            <th>Endereço</th>
+            <th>Aporte</th>
+            <th>Lote</th>
+            <th>Identidade</th>
+            <th>Análise</th>
+            <th>Objetivos</th>
+            <th>SWOT</th>
+            <th>Marketing</th>
+            <th>Futuro</th>
+            <th>Observações</th>
+            <th>Preenchido</th>
+        </tr>
+        {% for preenchimento in preenchimentos %}
+        <tr>
+            <td>{{ preenchimento.proponente }}</td>
+            <td>{{ preenchimento.responsavel }}</td>
+            <td>{{ preenchimento.cnpj }}</td>
+            <td>{{ preenchimento.cpf }}</td>
+            <td>{{ preenchimento.endereco }}</td>
+            <td>{{ preenchimento.aporte }}</td>
+            <td>{{ preenchimento.lote }}</td>
+            <td>{{ preenchimento.identidade }}</td>
+            <td>{{ preenchimento.analise }}</td>
+            <td>{{ preenchimento.objetivos }}</td>
+            <td>{{ preenchimento.swot }}</td>
+            <td>{{ preenchimento.marketing }}</td>
+            <td>{{ preenchimento.futuro }}</td>
+            <td>{{ preenchimento.observacoes }}</td>
+            <td>{{ "Sim" if preenchimento.preenchido else "Não" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

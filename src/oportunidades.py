@@ -7,7 +7,7 @@ from jinja2_fragments.flask import render_block
 from werkzeug.utils import secure_filename
 from src.models import Propostas, Preenchimento, Detalhes, Links, Arquivos, Instituição
 from src.forms import proponente_form, Etapa1Form, Etapa2Form, Etapa3Form, Etapa4Form, Etapa5Form, Etapa6Form, \
-    Etapa7Form, Etapa8Form, DocumentoForm
+    Etapa7Form, Etapa8Form, DocumentoForm, EtapaFinalForm
 from src.utils import atualizar_preenchimento, upload_s3, somente_cliente, redirecionar_view
 
 oportunidades = Blueprint('oportunidades', __name__)
@@ -140,7 +140,7 @@ def etapa5_add():
 @somente_cliente
 def etapa6():
     if g.oportunidade == 'FIM':
-        return redirect(url_for('lead.oi', hashdd=g.cliente.links[0].link))
+        return redirect(url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), 307)
 
     prop_form = Etapa6Form()
     alvo = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
@@ -202,9 +202,23 @@ def etapa9():
                 g.preenchimento.arquivos.append(pdf)
                 current_app.db.session.commit()
                 upload_s3(arquivo)
-            resposta = make_response(redirect=url_for('lead.oi', hashdd=g.cliente.links[0].link))
+            resposta = make_response(redirect=url_for('.etapafinal', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
             return resposta
         return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo, file=True)
+
+
+@oportunidades.post('/etapafinal')
+@somente_cliente
+def etapafinal():
+    prop_form = EtapaFinalForm()
+    alvo = url_for('lead.oportunidades.etapafinal', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
+    if current_app.htmx:
+        if prop_form.validate():
+            atualizar_preenchimento(prop_form, g.preenchimento)
+            current_app.db.session.commit()
+            return redirect(url_for('leads.oi', hashdd=g.cliente.links[0].link))
+        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+    return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
 def configure(bp):

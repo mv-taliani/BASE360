@@ -253,3 +253,6 @@ class DocumentoForm(FlaskForm):
     docs = MultipleFileField('Documentos necessários', validators=[InputRequired('Precisamos dos documentos'),
                                                                    MultipleFileAllowed(['pdf'], 'Apenas PDF\'s')])
 
+
+class EtapaFinalForm(FlaskForm):
+    observações = TextAreaField('Observações ')
