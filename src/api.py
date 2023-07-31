@@ -25,7 +25,7 @@ def gerar_link():
     cliente = Cliente(cpf=cpf.replace('-', '').replace('.', '').replace('/', ''), nome=form.nome.data, vendedor_id=current_user.id)
     current_app.db.session.add(cliente)
     current_app.db.session.commit()
-    cliente = Cliente.query.filter_by(cpf=cpf).first()
+    cliente = Cliente.query.filter_by(cpf=cpf.replace('-', '').replace('.', '').replace('/', '')).first()
     url = str(current_app.hashid.encode(cliente.id))
     link = Links(link=url)
     telefone = Telefone(telefone=form.telefone.data)
