@@ -207,7 +207,7 @@ def etapa9():
         return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo, file=True)
 
 
-@oportunidades.post('/etapafinal')
+@oportunidades.route('/etapafinal', methods=['GET', 'POST'])
 @somente_cliente
 def etapafinal():
     prop_form = EtapaFinalForm()
@@ -216,7 +216,8 @@ def etapafinal():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
-            return redirect(url_for('leads.oi', hashdd=g.cliente.links[0].link))
+            return make_response(redirect=url_for('lead.oi', hashdd=g.cliente.links[0].link))
+            return redirect(url_for('lead.oi', hashdd=g.cliente.links[0].link))
         return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
