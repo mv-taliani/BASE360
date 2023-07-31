@@ -139,6 +139,9 @@ def etapa5_add():
 @oportunidades.post('/etapa6')
 @somente_cliente
 def etapa6():
+    if g.oportunidade == 'FIM':
+        return redirect(url_for('lead.oi', hashdd=g.cliente.links[0].link))
+
     prop_form = Etapa6Form()
     alvo = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
     if current_app.htmx:
@@ -199,7 +202,7 @@ def etapa9():
                 g.preenchimento.arquivos.append(pdf)
                 current_app.db.session.commit()
                 upload_s3(arquivo)
-            resposta = make_response(redirect=url_for('lead.index', hashdd=g.cliente.links[0].link))
+            resposta = make_response(redirect=url_for('lead.oi', hashdd=g.cliente.links[0].link))
             return resposta
         return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo, file=True)
 

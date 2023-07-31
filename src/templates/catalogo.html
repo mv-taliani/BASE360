@@ -19,7 +19,7 @@
 
         {% if not proposta.preenchimentos.count() %}
                 <button type="button" class="btn btn-primary" style="background-color: #ffa500; border-color: #ffa500;">
-            <a style="color: white;" href="{{ url_for('lead.oportunidades.index', hashdd=g.cliente.links[0].link, oportunidade=proposta.nome) }}">Assinar</a>
+            <a style="color: white;" target="_blank" href="{{ url_for('lead.oportunidades.index', hashdd=g.cliente.links[0].link, oportunidade=proposta.nome) }}">Assinar</a>
         </button>
         {% endif %}
         {% for preenchimento in proposta.preenchimentos %}
@@ -27,7 +27,7 @@
         <i class="ti ti-check"></i>
         {% else %}
         <button type="button" class="btn btn-primary" style="background-color: #ffa500; border-color: #ffa500;">
-            <a style="color: white;" href="{{ url_for('lead.oportunidades.index', hashdd=g.cliente.links[0].link, oportunidade=proposta.nome) }}">Assinar</a>
+            <a style="color: white;" target="_blank" href="{{ url_for('lead.oportunidades.index', hashdd=g.cliente.links[0].link, oportunidade=proposta.nome) }}">Assinar</a>
         </button>
         {% endif %}
         {% endfor %}
