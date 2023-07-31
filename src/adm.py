@@ -1,7 +1,7 @@
 from flask import Blueprint, current_app
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-from src.models import Users, Telefone, Cliente, Propostas, Links, db, Preenchimento, Detalhes, Instituição
+from src.models import Users, Telefone, Cliente, Propostas, Links, db, Preenchimento, Detalhes, Instituição, Arquivos
 from werkzeug.security import generate_password_hash
 from flask_login import current_user
 
@@ -43,6 +43,7 @@ admin.add_view(MyView(Links, db.session, 'Links'))
 admin.add_view(MyView(Preenchimento, db.session, 'Preenchimento'))
 admin.add_view(MyView(Detalhes, db.session, 'Detalhes'))
 admin.add_view(MyView(Instituição, db.session, 'Instituição'))
+admin.add_view(MyView(Arquivos, db.session, 'Arquivos'))
 
 def configure(app):
     admin.init_app(app)

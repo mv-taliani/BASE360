@@ -1,9 +1,13 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
+import io
+
+from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, send_file
 from flask_login import login_required, current_user
 import pdfkit
 import flask_excel
+import zipfile
 from src.forms import link_form_builder
-from src.models import Cliente, Preenchimento, Propostas, Detalhes, Links
+from src.models import Cliente, Preenchimento, Propostas, Detalhes, Links, Arquivos
+from src.utils import get_s3
 
 views = Blueprint('views', __name__)
 
@@ -57,11 +61,16 @@ def clientes():
     return render_template('clientes.html', clientes=cliente)
 
 
-@views.get('/cliente/contrato/<cpf>/<proposta>.pdf')
-def contrato(cpf, proposta):
-    preenchimento = Detalhes.query.join(Preenchimento).join(Propostas).filter_by(nome=proposta).join(Links).join(Cliente).filter_by(cpf=cpf).all()
-    colunas = ['descricao', 'periodo', 'valor', 'justificativa']
-    return flask_excel.make_response_from_query_sets(preenchimento, colunas, 'pdf', file_name=f'{cpf}_{proposta}')
+@views.get('/cliente/arquivos/<cpf>/<proposta>')
+def documentos(cpf, proposta):
+    links = Arquivos.query.join(Preenchimento).join(Propostas).filter_by(nome=proposta).join(Links).join(Cliente).filter_by(cpf=cpf).all()
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+        for link in links:
+            file_stream = get_s3(link.nome_aws)
+            zip_file.writestr(link.nome_original, file_stream.getvalue())
+    zip_buffer.seek(0)
+    return send_file(zip_buffer, 'application/zip', True, f'{cpf}_{proposta}.zip')
 
 
 @views.get('/cliente/tabela/<cpf>/<proposta>')
