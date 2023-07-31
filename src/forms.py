@@ -36,6 +36,7 @@ class RegisForm(FlaskForm):
 
         return True
 
+
 class ClienteForm(FlaskForm):
     cpf = StringField('CPF', validators=[InputRequired(), Length(min=11, max=20, message='CPF Inválido')])
     rg = StringField('RG', validators=[InputRequired(), Length(min=7, max=20)])
@@ -66,6 +67,10 @@ def link_form_builder(servicos, **kwargs):
     for i, servico in enumerate(servicos):
         setattr(LinkForm, f'{servico}', BooleanField(label=str(servico).upper(), name='check'))
     return LinkForm(**kwargs)
+
+
+class ClienteLogin(FlaskForm):
+    senha = PasswordField('Senha', validators=[InputRequired('Você precisa logar')])
 
 
 class ClienteRegis(FlaskForm):

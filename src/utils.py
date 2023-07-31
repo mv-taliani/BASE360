@@ -1,10 +1,9 @@
 from functools import wraps
 from flask_login import current_user
-from flask import current_app, g
+from flask import current_app, g, abort, redirect, url_for
 import boto3
 import io
 import uuid
-from werkzeug.utils import secure_filename
 
 
 def validar(tipo, valor):
@@ -18,10 +17,24 @@ def validar(tipo, valor):
 def somente_cliente(func):
     @wraps(func)
     def inner(*args, **kwargs):
-        if current_user == g.cliente:
-            return func(*args, **kwargs)
-        return current_app.login_manager.unauthorized()
+        try:
+            if current_user.cpf == g.cliente.cpf:
+                return func(*args, **kwargs)
+        except:
+            return abort(404)
     return inner
+
+
+def redirecionar_view(url, atributo, oportunidade):
+    def wrapper(func):
+        @wraps(func)
+        def inner(*args, **kwargs):
+            if getattr(g, atributo) == oportunidade:
+                return redirect(url_for(url))
+            return func(*args, **kwargs)
+        return inner
+    return wrapper
+
 
 
 def atualizar_preenchimento(form, model):
@@ -48,14 +61,17 @@ def _set_filename(cpf, proposta):
     return inner
 
 
-def upload_s3(file, set_filename):
+def upload_s3(file):
     file_stream = io.BytesIO(file.read())
-    filename = set_filename(file.filename)
+    filename = file.filename
     s3 = _connect_s3()
     s3.upload_fileobj(file_stream, current_app.config['S3_BUCKET_NAME'], filename)
-    file_stream.seek(0)
     return filename
 
 
 def get_s3(filename):
-    ...
+    file_stream = io.BytesIO()
+    s3 = _connect_s3()
+    s3.download_fileobj(current_app.config['S3_BUCKET_NAME'], filename, file_stream)
+    file_stream.seek(0)
+    return file_stream

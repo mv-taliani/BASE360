@@ -22,7 +22,7 @@ def gerar_link():
         resposta = make_response()
         resposta.headers['HX-Redirect'] = url_for('views.pesquisar', cpf=cli.cpf)
         return resposta
-    cliente = Cliente(cpf=cpf, nome=form.nome.data, vendedor_id=current_user.id)
+    cliente = Cliente(cpf=cpf.replace('-', '').replace('.', '').replace('/', ''), nome=form.nome.data, vendedor_id=current_user.id)
     current_app.db.session.add(cliente)
     current_app.db.session.commit()
     cliente = Cliente.query.filter_by(cpf=cpf).first()

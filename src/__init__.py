@@ -34,10 +34,6 @@ def create_app():
     def load_user(id_):
         return Users.query.get(int(id_)) or Cliente.query.get(int(id_))
 
-    login_manager.blueprint_login_views = {
-        'lead': '/<hashdd>/',
-    }
-
     app.htmx = HTMX(app)
     hashids = Hashids(min_length=4, salt=app.config['SECRET_KEY'])
     app.hashid = hashids
