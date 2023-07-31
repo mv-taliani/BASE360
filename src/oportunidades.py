@@ -1,9 +1,11 @@
+import boto3
 from flask import Blueprint, g, abort, render_template, current_app, redirect, url_for, flash
 from jinja2_fragments.flask import render_block
+from werkzeug.utils import secure_filename
 from src.models import Propostas, Preenchimento, Detalhes, Links
 from src.forms import proponente_form, Etapa1Form, Etapa2Form, Etapa3Form, Etapa4Form, Etapa5Form, Etapa6Form, \
-    Etapa7Form, Etapa8Form
-from src.utils import atualizar_preenchimento
+    Etapa7Form, Etapa8Form, DocumentoForm
+from src.utils import atualizar_preenchimento, upload_s3
 
 oportunidades = Blueprint('oportunidades', __name__)
 
@@ -152,7 +154,6 @@ def etapa8():
     if current_app.htmx:
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
-            g.preenchimento.preenchido = True
             current_app.db.session.commit()
             return redirect(url_for('lead.index', hashdd=g.cliente.links[0].link))
         flash("Nesta seção deverá ser preenchido a contrapartida social (Ou seja, dos 10% da verba destina ao CANS, 5% "
@@ -160,6 +161,30 @@ def etapa8():
               'primary')
         return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+
+
+@oportunidades.route('/etapa9', methods=['get', 'post'])
+def etapa9():
+    prop_form = DocumentoForm()
+    alvo = url_for('lead.oportunidades.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
+    if current_app.htmx:
+        if prop_form.validate():
+            # atualizar_preenchimento(prop_form, g.preenchimento)
+            # g.preenchimento.preenchido = True
+            # current_app.db.session.commit()
+            for arquivo in prop_form.docs.data:
+                print(current_app.config['S3_ACCESS_KEY'])
+                print(current_app.config['S3_SECRET_KEY'])
+                nome = upload_s3(arquivo)
+
+
+            return 'ok'
+            return redirect(url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
+            return redirect(url_for('lead.index', hashdd=g.cliente.links[0].link))
+        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo, file=True)
+    print('ue')
+    return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo, file=True)
+
 
 
 def configure(bp):

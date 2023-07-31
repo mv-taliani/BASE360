@@ -1,0 +1,4 @@
+[default]
+S3_ACCESS_KEY = "AKIA3QDQYWLITSHCCIOI"
+S3_SECRET_KEY = "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"
+S3_BUCKET_NAME = "base360crm"
