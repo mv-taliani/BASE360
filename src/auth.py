@@ -31,7 +31,10 @@ def login_post():
 
 
 @auth.route('/registrar', methods=['GET', 'POST'])
+@login_required
 def registrar():
+    if not current_user.hierarquia > 1:
+        return redirect(url_for('views.index'))
     form = RegisForm()
     if form.validate_on_submit():
         user = Users(email=form.email.data, nome=form.nome.data, senha=form.senha.data)

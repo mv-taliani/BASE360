@@ -32,22 +32,11 @@ class Cliente(db.Model, UserMixin):
     cadastrado = db.Column(db.DateTime(timezone=False), default=db.func.now())
     senha = db.Column(db.String)
 
-    vendedor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    vendedor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    vendedor = db.relationship('Users', backref=db.backref('clientes', lazy='dynamic'))
+
     def __repr__(self):
         return f'Cliente: {self.cpf}'
-
-
-class Endereco(db.Model):
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    cep = db.Column(db.String(8))
-    uf = db.Column(db.String(2))
-    cidade = db.Column(db.String)
-    bairro = db.Column(db.String)
-    rua = db.Column(db.String)
-    numero = db.Column(db.Integer)
-
-    cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
-    cliente = db.relationship('Cliente', backref='enderecos')
 
 
 class Telefone(db.Model):
@@ -59,39 +48,6 @@ class Telefone(db.Model):
 
     def __repr__(self):
         return f'Telefone: {self.telefone}'
-
-
-class Origem(db.Model):
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    nome = db.Column(db.String(30))
-    ativo = db.Column(db.Boolean, default=False)
-
-    def __str__(self):
-        return str(self.nome)
-
-
-class Campanha(db.Model):
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    nome = db.Column(db.String(30))
-    ativo = db.Column(db.Boolean, default=False)
-
-    def __str__(self):
-        return str(self.nome)
-
-
-class CanalDaVenda(db.Model):
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    nome = db.Column(db.String(30))
-    ativo = db.Column(db.Boolean, default=False)
-
-    def __repr__(self):
-        return str(self.nome)
-
-
-class FormaPagamento(db.Model):
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    nome = db.Column(db.String(30))
-    ativo = db.Column(db.Boolean, default=False)
 
 
 class Propostas(db.Model):
@@ -146,6 +102,15 @@ class Preenchimento(db.Model):
     propostas = db.relationship('Propostas', backref=db.backref('preenchimentos', lazy='dynamic'))
 
 
+class Arquivos(db.Model):
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    nome_original = db.Column(db.String)
+    nome_aws = db.Column(db.String)
+    preenchimento_id = db.Column(db.Integer, db.ForeignKey('preenchimento.id'), nullable=False)
+
+    preenchimento = db.relationship('Preenchimento', backref=db.backref('arquivos', lazy='dynamic'))
+
+
 class Instituição(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
     nome = db.Column(db.String(100))
@@ -156,6 +121,7 @@ class Instituição(db.Model):
     preenchimento_id = db.Column(db.Integer, db.ForeignKey(Preenchimento.id), nullable=False)
 
     preenchimentos = db.relationship('Preenchimento', backref=db.backref('insituicao', lazy='dynamic'))
+
 
 class Detalhes(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)

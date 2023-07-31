@@ -5,7 +5,9 @@
             <div>
               <h6 class="mb-4"><a style="color: orange;" href="{{ url_for('views.pesquisar', cpf=cliente.cpf) }}">{{ cliente.nome }}</a></h6>
               <div class="d-flex align-items-center justify-content-between mb-3">
-                <p class="small mb-0"><i class="far fa-clock me-2"></i>3 hrs</p>
+                <p class="small mb-0"><i class="far fa-clock me-2"></i>
+                  {{ cliente.vendedor.nome }}
+                </p>
                 <p class="fw-bold mb-0">{{ cliente.links[0].acessos }}</p>
               </div>
             </div>

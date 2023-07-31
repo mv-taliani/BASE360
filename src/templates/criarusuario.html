@@ -16,7 +16,6 @@
                   {% include '_flash_alerts.html' %}
                   <img type="img" src="{{ url_for('static', filename='/images/logos/base360.png') }}" style="width: 60%; margin: auto; display: block;">
                 </a>
-                <p class="text-center">Abençoado seja o usuário</p>
                   {% from "_form_errors.html" import render_error %}
                 <form action="{{ url_for('auth.registrar') }}" method="POST" novalidate>
                   {{ form.hidden_tag() }}

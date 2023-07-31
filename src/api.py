@@ -1,5 +1,5 @@
 from flask import g, Blueprint, make_response, request, current_app, render_template, url_for, redirect
-from flask_login import login_required
+from flask_login import login_required, current_user
 from jinja2_fragments.flask import render_block
 from src.forms import link_form_builder, ClienteRegis, proponente_form
 from src.models import Links, Cliente, Propostas, Telefone
@@ -8,8 +8,9 @@ api = Blueprint('api', __name__)
 
 
 @api.post('/links/')
+@login_required
 def gerar_link():
-    form = link_form_builder('FIP FIM FIS FIE FIV PAM PAE PIEDU'.split())
+    form = link_form_builder([x.nome for x in Propostas.query.all()])
     if not form.validate():
         resposta = make_response(render_template('htmx/link_form.html', form=form))
         resposta.headers['HX-Retarget'] = '#formProposta'
@@ -21,7 +22,7 @@ def gerar_link():
         resposta = make_response()
         resposta.headers['HX-Redirect'] = url_for('views.pesquisar', cpf=cli.cpf)
         return resposta
-    cliente = Cliente(cpf=cpf, nome=form.nome.data)
+    cliente = Cliente(cpf=cpf, nome=form.nome.data, vendedor_id=current_user.id)
     current_app.db.session.add(cliente)
     current_app.db.session.commit()
     cliente = Cliente.query.filter_by(cpf=cpf).first()
@@ -43,7 +44,7 @@ def gerar_link():
 @login_required
 def permissoes(id):
     cliente = Cliente.query.get(id)
-    form = link_form_builder('FIP FIM FIS FIE FIV PAM PAE PIEDU'.split(), **{prop.nome.upper(): True for prop in
+    form = link_form_builder([x.nome for x in Propostas.query.all()], **{prop.nome.upper(): True for prop in
                                                                              cliente.links[0].propostas})
     return render_template('htmx/form_permissoes.html', cliente=cliente, form=form)
 

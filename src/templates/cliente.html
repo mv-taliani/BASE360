@@ -99,10 +99,13 @@
                 <p class="mb-0">{{ i.nome }}</p>
               </div>
               <div class="col-sm-9">
-                  <button hx-get="{{ url_for('views.contrato', cpf=cliente.cpf, proposta=i.nome) }}" class="btn btn-primary">Contrato</button>
-                  <a href="{{ url_for('views.contrato', cpf=cliente.cpf, proposta=i.nome) }}">teste</a>
+                  <a target="_blank" href="{{ url_for('views.contrato', cpf=cliente.cpf, proposta=i.nome) }}">
+                  <button class="btn btn-primary">Contrato</button>
+                  </a>
+                  <a target="_blank" href="{{ url_for('views.tabela', cpf=cliente.cpf, proposta=i.nome) }}">
                   <button class="btn btn-primary">Tabela</button>
-                  <button class="btn btn-primary">Documentos</button>
+                  </a>
+                      <button class="btn btn-primary">Documentos</button>
               </div>
             </div>
               {% endif %}

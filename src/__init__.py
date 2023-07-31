@@ -1,7 +1,9 @@
+from dynaconf import FlaskDynaconf
 from flask import Flask
 from flask_login import LoginManager
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_htmx import HTMX
+import flask_excel
 from hashids import Hashids
 from src.auth import configure as auth_config
 from src.views import configure as views_config
@@ -14,8 +16,9 @@ from src.cliente import configure as cliente_config
 
 def create_app():
     app = Flask(__name__)
+    FlaskDynaconf(app)
     app.config['SECRET_KEY'] = '230894ruw2ru9wuef9aue90fu90fuwdufisdou9sdufwpwe9fw04r9sdposdçflj'
-    app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///nhoque.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///testeteste.db'
     db_config(app)
     app.config['DEBUG_TB_TEMPLATE_EDITOR_ENABLED'] = True
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -38,6 +41,8 @@ def create_app():
     app.htmx = HTMX(app)
     hashids = Hashids(min_length=4, salt=app.config['SECRET_KEY'])
     app.hashid = hashids
+
+    flask_excel.init_excel(app)
 
     adm_config(app)
     api_config(app)

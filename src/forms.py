@@ -1,9 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField, BooleanField, StringField, DateField, IntegerField, SelectField, TextAreaField, FloatField
-from wtforms.validators import DataRequired, InputRequired, Length, EqualTo, Email, ValidationError
-from wtforms_sqlalchemy.fields import QuerySelectField
-from pydantic_br import CPF, CNPJ, FieldInvalidError
-from src.models import Origem, Campanha, Propostas, Users, Cliente
+from flask_wtf.file import FileAllowed
+from werkzeug.datastructures import FileStorage
+from wtforms import MultipleFileField, EmailField, PasswordField, BooleanField, StringField, DateField, IntegerField, SelectField, TextAreaField
+from wtforms.validators import DataRequired, InputRequired, Length, EqualTo, Email, ValidationError, StopValidation
+from collections import abc
+from pydantic_br import CPF, CNPJ
+from src.models import Users, Cliente
 from src.utils import validar
 from src.constants import UFS
 
@@ -185,3 +187,64 @@ class Etapa8Form(FlaskForm):
     contato = StringField('Contato', validators=[InputRequired('Precisamos do contato')])
     dados_bancarios = TextAreaField('Dados Bancários', validators=[InputRequired('Precisamos dos dados bancários'),
                                     Length(min=1, max=100)])
+
+
+def validar_extensao(extensoes):
+    def validate_doc(form, field):
+        if not field.data:
+            raise ValidationError('Precisamos dos documentos!')
+
+        for dado in field.data:
+            print(dado)
+            filename: str = dado.filename.lower()
+            if not all(filename.endswith('.' + x) for x in extensoes):
+                raise ValidationError('Precisamos que esteja em PDF')
+    return validate_doc
+
+
+class MultipleFileAllowed:
+    """Validates that the uploaded file is allowed by a given list of
+    extensions or a Flask-Uploads :class:`~flaskext.uploads.UploadSet`.
+
+    :param upload_set: A list of extensions or an
+        :class:`~flaskext.uploads.UploadSet`
+    :param message: error message
+
+    You can also use the synonym ``file_allowed``.
+    """
+
+    def __init__(self, upload_set, message=None):
+        self.upload_set = upload_set
+        self.message = message
+
+    def __call__(self, form, field):
+        if not (all(isinstance(data, FileStorage) for data in field.data) and field.data):
+            for i in field.data:
+                print(i.filename)
+            raise StopValidation('Precisamos que esteja em PDF')
+
+        for data in field.data:
+            filename = data.filename.lower()
+
+            if isinstance(self.upload_set, abc.Iterable):
+                if any(filename.endswith("." + x) for x in self.upload_set):
+                    return
+
+                raise StopValidation(
+                    self.message
+                    or field.gettext(
+                        "File does not have an approved extension: {extensions}"
+                    ).format(extensions=", ".join(self.upload_set))
+                )
+
+            if not self.upload_set.file_allowed(field.data, filename):
+                raise StopValidation(
+                    self.message
+                    or field.gettext("File does not have an approved extension.")
+                )
+
+
+class DocumentoForm(FlaskForm):
+    docs = MultipleFileField('Documentos necessários', validators=[InputRequired('Precisamos dos documentos'),
+                                                                   MultipleFileAllowed(['pdf'], 'Apenas PDF\'s')])
+

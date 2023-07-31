@@ -2,7 +2,11 @@
 
 {% block content %}
 {% from '_form_errors.html' import render_error %}
-<form hx-post="{{ alvo }}" hx-target="this" hx-swap="outerHTML" class="">
+<form hx-post="{{ alvo }}"
+      {% if file %}
+      hx-encoding='multipart/form-data'
+      {% endif %}
+      hx-target="this" hx-swap="outerHTML" class="">
   {% include '_flash_alerts.html' %}
   <div class="Proponente">
     <div class="col-md-12">
