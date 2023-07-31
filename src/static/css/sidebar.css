@@ -469,3 +469,7 @@ text-align: center;
 .dark-mode .text-muted {
   color: white; /* Escolha a cor desejada para o modo escuro */
 }
+
+#divContent{
+  overflow:auto; 
+ }
