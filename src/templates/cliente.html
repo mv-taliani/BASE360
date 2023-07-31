@@ -100,12 +100,12 @@
               </div>
               <div class="col-sm-9">
                   <a target="_blank" href="{{ url_for('views.contrato', cpf=cliente.cpf, proposta=i.nome) }}">
-                  <button class="btn btn-primary">Contrato</button>
+                  <button class="btn btn-primary" style="background-color: #ffa500; color: white; border-color: black;">Contrato</button>
                   </a>
                   <a target="_blank" href="{{ url_for('views.tabela', cpf=cliente.cpf, proposta=i.nome) }}">
-                  <button class="btn btn-primary">Tabela</button>
+                  <button class="btn btn-primary" style="background-color: #ffa500; color: white; border-color: black;">Tabela</button>
                   </a>
-                      <button class="btn btn-primary">Documentos</button>
+                      <button class="btn btn-primary" style="background-color: #ffa500; color: white; border-color: black;">Documentos</button>
               </div>
             </div>
               {% endif %}

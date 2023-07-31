@@ -3,50 +3,57 @@
 {% block content %}
 {% from '_form_errors.html' import render_error %}
 
-<div id="tab_form" hx-target="this" hx-swap="outerHTML">
-<table id="tabela">
-  <thead>
-      <tr>
-          <th>Descrição detalhada</th>
-          <th>Período de utilização</th>
-          <th>Valor total destinado para essa aquisição</th>
-          <th>Justificativa</th>
-          <th></th>
-      </tr>
-  </thead>
-  <tbody>
-    {% for field in g.preenchimento.detalhes %}
-      <tr>
-          <td>{{field.descricao}}</td>
-          <td>{{field.periodo}}	</td>
-          <td>{{field.valor}}	</td>
-          <td>{{field.justificativa}}</td>
-          <td>
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ff9300" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-              <path d="M5 12l5 5l10 -10" />
-              </svg>
-          </td>
-      </tr>
-    {% endfor %}
+<div class="info-luiz" >
+  <div id="tab_form" hx-target="this" hx-swap="outerHTML">
+  <table id="tabela" class="table">
+    <thead>
+        <tr>
+            <th scope="col">Descrição detalhada</th>
+            <th scope="col">Período de utilização</th>
+            <th scope="col">Valor total destinado para essa aquisição</th>
+            <th scope="col">Justificativa</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for field in g.preenchimento.detalhes %}
+        <tr>
+            <td>{{field.descricao}}</td>
+            <td>{{field.periodo}}	</td>
+            <td>{{field.valor}}	</td>
+            <td>{{field.justificativa}}</td>
+            <td>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ff9300" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M5 12l5 5l10 -10" />
+                </svg>
+            </td>
+        </tr>
+      {% endfor %}
 
-      <tr>
-              {{ prop_form.hidden_tag() }}
-        {% for field in prop_form if field.name not in ['csrf_token'] %}
-              <td>
-                  {{field(required=False, value=field.data if field.data)}}
-                  {{ render_error(field) }}
-              </td>
+        <tr>
+                {{ prop_form.hidden_tag() }}
+          {% for field in prop_form if field.name not in ['csrf_token'] %}
+                <td>
+                    {{field(required=False, value=field.data if field.data)}}
+                    {{ render_error(field) }}
+                </td>
 
-        {% endfor %}
-              <td><button hx-trigger="click" hx-post="{{ alvo }}" hx-include="closest tr">Adicionar</button></td>
-      </tr>
-  </tbody>
-</table>
-<br>
-    {% if alvo2 %}
-    <button class="btn btn-primary" hx-post="{{ alvo2 }}">Avançar</button>
-    {% endif %}
+          {% endfor %}
+                <td><button hx-trigger="click" hx-post="{{ alvo }}" hx-include="closest tr">Adicionar</button></td>
+        </tr>
+    </tbody>
+  </table>
+  <br>
+      {% if alvo2 %}
+      <button class="btn btn-primary" style="background-color: #ffa500; border-color: #ffa500;" hx-post="{{ alvo2 }}">Avançar</button>
+      {% endif %}
+
+  </div>
 
 </div>
+
+<div id="tab_form" hx-target="this" hx-swap="outerHTML">
+    <table id="tabela">
+      <thead>
 {% endblock %}

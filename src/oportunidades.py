@@ -155,6 +155,7 @@ def etapa8():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
+            return redirect(url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
             return redirect(url_for('lead.index', hashdd=g.cliente.links[0].link))
         flash("Nesta seção deverá ser preenchido a contrapartida social (Ou seja, dos 10% da verba destina ao CANS, 5% "
               "ficará para o CANS e os demais serão destinados a instituição descrita abaixo) -  Descreva a instituição",

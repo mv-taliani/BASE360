@@ -12,11 +12,16 @@
     <div class="col-md-12">
       {{ prop_form.hidden_tag() }}
       {% for field in prop_form if field.name not in ['csrf_token'] %}
+      {% if field.type == 'TextAreaField' %}
+      {{ field.label(class='tarea') }}
+      {{ field(class="form-control text-center", required=False) }}
+      {% else %}
       {{ field(class="form-control text-center", placeholder=field.label.text, required=False) }}
+      {% endif %}
       {{ render_error(field) }}
       <br>
       {% endfor %}
-      <button class="btn btn-primary">Próximo</button>
+      <button class="btn btn-primary" style="background-color: #ffa500; color: white; border-color: #ffa500;" >Próximo</button>
     </div>
   </div>
 </form>
