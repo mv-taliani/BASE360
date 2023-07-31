@@ -1,8 +1,7 @@
 import io
 
-from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, send_file
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file
 from flask_login import login_required, current_user
-import pdfkit
 import flask_excel
 import zipfile
 from src.forms import link_form_builder
