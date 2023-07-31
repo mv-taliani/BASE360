@@ -1,35 +1,5 @@
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>CONFIRME</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-  <link href=  "{{ url_for('static', filename='css/etapas.css') }}" rel="stylesheet">
-  <link href= "{{ url_for('static', filename='css/bootstrap.min.js') }}" rel="stylesheet">
-</head>
+{% extends 'etapas.html' %}
 
-<body>
-  <section id="contact" class="contact section-bg">
-    <div class="container" data-aos="fade-up">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="page-title home text-center">
-            <img src= "{{ url_for('static', filename='images/logos/base360.png') }}" style="width:50%;">
-          </div>          
-          <div class="row justify-content-center">
-            <div class="col-lg-9">
-              <div class="info-box mb-4">
-                <div>
-                    <div class="col-md-12">
-                      <input class="form-control text-center" id="" name="" placeholder="Confirme a senha" type="password" value="">
-                    </div>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-</body>
+{% block content %}
+  <input class="form-control text-center" id="" name="" placeholder="Confirme a senha" type="password" value="">
+{% endblock %}
