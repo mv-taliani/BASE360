@@ -3,7 +3,12 @@
 
 
 {% block content %}
-    <h3 style="text-align: center;">Clientes - {{ clientes|length }}</h3>
+{% if current_user.hierarquia == 1 %}
+    <h3 style="text-align: center;">Clientes - {{ clientes.count() }}</h3>
+    {% else %}
+        <h3 style="text-align: center;">Clientes - {{ clientes|length }}</h3>
+{% endif %}
+
 {% for cliente in clientes %}
 {% if loop.index % 2 != 0  %}
     <hr>

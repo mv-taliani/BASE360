@@ -27,8 +27,8 @@
           </div>
         </div>
         <!-- Sidebar navigation-->
-        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
-          <ul id="sidebarnav">
+        <nav class="sidebar-nav scroll-sidebar vh-100" data-simplebar="">
+          <ul id="sidebarnav" class='scroll-sidebar overflow-auto vh-100'>
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
               <span class="hide-menu" style="color: #fff;">Estilo</span>
@@ -42,10 +42,6 @@
               <a class="sidebar-link" style="width: 8%;">
                 <button id="sidebar-degrade-toggle" class="btn btn-outline-light">Tirar Degradê<br> </button>
               </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu" style="color: #fff;">Home</span>
             </li>
             <li class="sidebar-item">
               <button class="sidebar-link" href="#" aria-expanded="false" style="background-color: transparent; border-color: transparent; color: white; ">
@@ -82,10 +78,6 @@
                 <span class="hide-menu">Clientes</span>
               </a>
             </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu" style="color: #fff;">AUTH</span>
-            </li>
             <li class="sidebar-item">
               <a class="sidebar-link" href="{{url_for('auth.logout')}}" aria-expanded="false">
                 <span>
@@ -94,6 +86,7 @@
                 <span class="hide-menu">logout</span>
               </a>
             </li>
+            {% if current_user.hierarquia > 1 %}
             <li class="sidebar-item">
               <a class="sidebar-link" href="{{url_for('auth.registrar')}}" aria-expanded="false">
                 <span>
@@ -102,6 +95,7 @@
                 <span class="hide-menu">Registrar</span>
               </a>
             </li>
+            {% endif %}
 
           </ul>
         </nav>
@@ -153,7 +147,7 @@ document.addEventListener('click', function(event) {
     searchInputContainer.style.display = 'none';
   }
 });
-    
+
     </script>
     </body>
 </html>

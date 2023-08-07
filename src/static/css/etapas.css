@@ -149,7 +149,7 @@ h6 {
 # Navigation Menu
 --------------------------------------------------------------*/
 /**
-* Desktop Navigation 
+* Desktop Navigation
 */
 .navbar {
   padding: 0;
@@ -308,7 +308,7 @@ h6 {
 }
 
 /**
-* Mobile Navigation 
+* Mobile Navigation
 */
 .mobile-nav-toggle {
   color: #fff;
@@ -1653,6 +1653,29 @@ td {
     border: 1px solid #333;
 }
 
+
+    .info-luiz {
+  width: 100%;
+}
+
+#tabela {
+  width: 100%;
+  border-collapse: collapse; /* Mescla as bordas das células da tabela */
+  table-layout: fixed; /* Evita que a tabela se ajuste ao conteúdo */
+  box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+}
+
+td {
+  box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+}
+
+.textea {
+  height: 10%;
+  width: 100%;
+  box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+}
+
+
 thead,
 tfoot {
     background-color: orange;
@@ -1672,3 +1695,6 @@ tfoot {
 
 #tabela th {
 }
+
+
+#tabela input{-webkit-fill-available}

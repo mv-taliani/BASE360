@@ -3,7 +3,7 @@ from flask_htmx import make_response
 from flask_login import current_user, login_user
 from jinja2_fragments.flask import render_block
 
-from src.models import Links
+from src.models import Links, Users, Cliente
 from src.forms import ClienteRegis, ProponenteForm, ClienteLogin
 from src.oportunidades import configure as configure_oportunidade
 
@@ -17,15 +17,17 @@ def get_cliente(endpoint, values):
     id = current_app.hashid.decode(hashh)
     # if not id:
     #     return abort(404)
-    link = Links.query.get_or_404(id[0])
-    link.acessos += 1
-    g.cliente = link.cliente
+    link = Cliente.query.get_or_404(id[0])
+    link.links[0].acessos += 1
+    g.cliente = link
     g.hashdd = hashh
     current_app.db.session.commit()
 
 
 @lead.get('/')
 def oi():
+    if isinstance(current_user, Users):
+        return redirect(url_for('views.index'))
     if not g.cliente.senha:
         return redirect(url_for('.cliente_registrar', hashdd=g.hashdd))
     try:

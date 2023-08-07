@@ -18,7 +18,7 @@ def gerar_link():
     cpf = form.cpf.data
     props = request.form.getlist('check')
 
-    if cli := Cliente.query.filter_by(cpf=cpf).first():
+    if cli := Cliente.query.filter_by(cpf=cpf.replace('-', '').replace('.', '').replace('/', '')).first():
         resposta = make_response()
         resposta.headers['HX-Redirect'] = url_for('views.pesquisar', cpf=cli.cpf)
         return resposta
@@ -26,7 +26,7 @@ def gerar_link():
     current_app.db.session.add(cliente)
     current_app.db.session.commit()
     cliente = Cliente.query.filter_by(cpf=cpf.replace('-', '').replace('.', '').replace('/', '')).first()
-    url = str(current_app.hashid.encode(cliente.id))
+    url = str(current_app.hashid.encode(int(cliente.id)))
     link = Links(link=url)
     telefone = Telefone(telefone=form.telefone.data)
     cliente.links.append(link)

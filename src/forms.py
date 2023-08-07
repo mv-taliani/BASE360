@@ -117,7 +117,7 @@ class ProponenteForm(FlaskForm):
         initial_validation = super(ProponenteForm, self).validate()
         if not initial_validation:
             return False
-        if not validar(CNPJ, self.proponente) and not self.responsavel.data:
+        if validar(CNPJ, self.proponente) and not self.responsavel.data:
             print('batata')
             self.responsavel.errors.append('CNPJ necessita de um responsável legal!')
             return False
@@ -163,9 +163,9 @@ class Etapa4Form(FlaskForm):
 
 class Etapa5Form(FlaskForm):
     descricao = TextAreaField('Descrição', validators=[InputRequired('Preencha a descrição')])
-    periodo = StringField('Período', validators=[InputRequired('Preencha o período')])
+    periodo = StringField('Período', validators=[InputRequired('Preencha o período'), Length(max=50)])
     valor = StringField('Valor', validators=[InputRequired('Preencha o valor em R$'), validate_valor])
-    justificativa = StringField('Justificativa', validators=[InputRequired('Preencha a justificativa')])
+    justificativa = StringField('Justificativa', validators=[InputRequired('Preencha a justificativa'), Length(max=200)])
 
 
 class Etapa6Form(FlaskForm):

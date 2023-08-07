@@ -1,6 +1,6 @@
 from functools import wraps
 from flask_login import current_user
-from flask import current_app, g, abort, redirect, url_for
+from flask import current_app, g, abort, redirect, url_for, jsonify, make_response
 import boto3
 import io
 import uuid
@@ -22,7 +22,7 @@ def somente_cliente(func):
                 return func(*args, **kwargs)
         except Exception as e:
             print(e)
-            return abort(404)
+            raise e
     return inner
 
 

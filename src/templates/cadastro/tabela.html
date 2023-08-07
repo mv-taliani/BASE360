@@ -3,6 +3,7 @@
 {% block content %}
 {% from '_form_errors.html' import render_error %}
 
+
 <div class="info-luiz" >
   <div id="tab_form" hx-target="this" hx-swap="outerHTML">
   <table id="tabela" class="table">
@@ -18,7 +19,7 @@
     <tbody>
       {% for field in g.preenchimento.detalhes %}
         <tr>
-            <td>{{field.descricao}}</td>
+            <td style="height: 100%; width: 100%;">{{field.descricao}}</td>
             <td>{{field.periodo}}	</td>
             <td>{{field.valor}}	</td>
             <td>{{field.justificativa}}</td>
@@ -35,7 +36,7 @@
                 {{ prop_form.hidden_tag() }}
           {% for field in prop_form if field.name not in ['csrf_token'] %}
                 <td>
-                    {{field(required=False, value=field.data if field.data)}}
+                    {{field(required=False, value=field.data if field.data, style="height: 100%; width: 100%;")}}
                     {{ render_error(field) }}
                 </td>
 
