@@ -1,11 +1,11 @@
 import io
 
-from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, current_app
 from flask_login import login_required, current_user
 import flask_excel
 import zipfile
 from src.forms import link_form_builder
-from src.models import Cliente, Preenchimento, Propostas, Detalhes, Links, Arquivos, Users, Instituição
+from src.models import Cliente, Preenchimento, Propostas, Detalhes, Links, Arquivos, Users, Instituição, links_e_props
 from src.utils import get_s3
 
 views = Blueprint('views', __name__)
@@ -63,7 +63,8 @@ def clientes():
 @views.get('/cliente/arquivos/<cpf>/<proposta>')
 @login_required
 def documentos(cpf, proposta):
-    links = Arquivos.query.join(Preenchimento).join(Propostas).filter_by(nome=proposta).join(Links).join(Cliente).filter_by(cpf=cpf).all()
+    links = Arquivos.query.join(Preenchimento).join(Propostas).filter_by(nome=proposta).join(Links).join(
+        Cliente).filter_by(cpf=cpf).all()
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
         for link in links:
@@ -76,20 +77,34 @@ def documentos(cpf, proposta):
 @views.get('/cliente/tabela/<cpf>/<proposta>')
 @login_required
 def tabela(cpf, proposta):
-    preenchimento = Detalhes.query.join(Preenchimento).join(Propostas).filter_by(nome=proposta).join(Links).join(Cliente).filter_by(cpf=cpf).all()
+    preenchimento = Detalhes.query.join(Preenchimento).join(Propostas).filter_by(nome=proposta).join(Links).join(
+        Cliente).filter_by(cpf=cpf).all()
     colunas = ['descricao', 'periodo', 'valor', 'justificativa']
     return flask_excel.make_response_from_query_sets(preenchimento, colunas, 'xlsx', file_name=f'{cpf}_{proposta}')
+
 
 @views.get('/cliente/contrato/<cpf>/<proposta>')
 @login_required
 def contrato(cpf, proposta):
-    #preenchimento = current_app.db.session.query(Preenchimento, Propostas.nome, Cliente.cpf, Instituição).filter()
-    preenchimento = Preenchimento.query.join(Propostas).add_entity(Propostas).filter_by(nome=proposta).join(Links).join(Cliente).filter_by(cpf=cpf).join(Instituição).all()
-    colunas = ['proponente', 'responsavel', 'cnpj', 'cpf', 'endereco', 'aporte', 'lote', 'identidade', 'analise', 'objetivos', 'swot', 'marketing',
-    'futuro', 'observações', 'nome', 'cnpj', 'contato', 'dados bancarios']
-    return
-    return flask_excel.make_response_from_query_sets(preenchimento, colunas, 'xlsx', file_name=f'contrato_{cpf}_{proposta}')
+    # preenchimento = current_app.db.session.query(Preenchimento, Propostas.nome, Cliente.cpf, Instituição).filter()
+    preenchimento = Preenchimento.query.join(Propostas).add_entity(Propostas).filter_by(nome=proposta).join(Links).join(
+        Cliente).filter_by(cpf=cpf).join(Instituição).all()
 
+    query = (
+        current_app.db.session.query(Preenchimento, Propostas, Links, Cliente, Instituição)
+        .join(Propostas, Preenchimento.proposta_id)  # Substitua Preenchimento.proposta pelo relacionamento correto
+        .join(links_e_props, links_e_props.c.proposta_id == Propostas.id)
+        .join(Cliente, Cliente.id == Links.cliente_id)
+        .join(Instituição, Instituição.preenchimento_id == Preenchimento.id)
+        .filter(Propostas.nome == proposta, Cliente.cpf == cpf)
+        .all()
+    )
+
+    colunas = ['proponente', 'responsavel', 'cnpj', 'cpf', 'endereco', 'aporte', 'lote', 'identidade', 'analise',
+               'objetivos', 'swot', 'marketing',
+               'futuro', 'observações', 'nome', 'cnpj', 'contato', 'dados bancarios']
+    return flask_excel.make_response_from_query_sets(preenchimento, colunas, 'xlsx',
+                                                     file_name=f'contrato_{cpf}_{proposta}')
 
 
 def configure(app):

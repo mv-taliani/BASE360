@@ -15,12 +15,10 @@ from src.cliente import configure as cliente_config
 from urllib.parse import quote
 
 
-
 def create_app():
     app = Flask(__name__)
     FlaskDynaconf(app)
     app.config.from_prefixed_env()
-
 
     db_config(app)
     app.config['DEBUG_TB_TEMPLATE_EDITOR_ENABLED'] = True
