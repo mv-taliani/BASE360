@@ -1,5 +1,6 @@
-from flask import g, Blueprint, make_response, request, current_app, render_template, url_for, redirect
+from flask import g, Blueprint, request, current_app, render_template, url_for, redirect
 from flask_login import login_required, current_user
+from flask_htmx import make_response
 from jinja2_fragments.flask import render_block
 from src.forms import link_form_builder, ClienteRegis, proponente_form
 from src.models import Links, Cliente, Propostas, Telefone
@@ -19,8 +20,7 @@ def gerar_link():
     props = request.form.getlist('check')
 
     if cli := Cliente.query.filter_by(cpf=cpf.replace('-', '').replace('.', '').replace('/', '')).first():
-        resposta = make_response()
-        resposta.headers['HX-Redirect'] = url_for('views.pesquisar', cpf=cli.cpf)
+        resposta = make_response(redirect=url_for('views.pesquisar', cpf=cli.cpf))
         return resposta
     cliente = Cliente(cpf=cpf.replace('-', '').replace('.', '').replace('/', ''), nome=form.nome.data, vendedor_id=current_user.id)
     current_app.db.session.add(cliente)
@@ -35,9 +35,7 @@ def gerar_link():
         proposta = Propostas.query.filter_by(nome=i.upper()).first()
         cliente.links[0].propostas.append(proposta)
     current_app.db.session.commit()
-    resposta = make_response(render_template('htmx/link_form.html', form=form, link=url_for('lead.oi', hashdd=url)))
-    resposta.headers['HX-Retarget'] = '#formProposta'
-    return resposta
+    return render_block('htmx/link_form.html', 'c_link', form=form, link=url_for('lead.oi', hashdd=url))
 
 
 @api.get('/permissoes/<id>')

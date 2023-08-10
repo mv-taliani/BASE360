@@ -56,9 +56,10 @@ class EnderecoForm(FlaskForm):
 
 
 class LinkFormBase(FlaskForm):
-    cpf = StringField('CPF', validators=[InputRequired('Preencha o CPF')])
+    cpf = StringField('CPF', validators=[InputRequired('Preencha o CPF'), Length(max=18, message='CPF ou CNPJ muito '
+                                                                                                 'longo')])
     nome = StringField('Nome', validators=[InputRequired('Coloque o nome do cliente.')])
-    telefone = StringField('Telefone', validators=[InputRequired('Insira o telefone do cliente!')])
+    telefone = StringField('Telefone', validators=[InputRequired('Insira o telefone do cliente!'), Length(max=13, message='Telefone muito longo')])
 
 
 def link_form_builder(servicos, **kwargs):

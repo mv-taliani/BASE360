@@ -13,10 +13,11 @@ class Users(db.Model, UserMixin):
     senha = db.Column(db.String, nullable=False)
     hierarquia = db.Column(db.Integer, nullable=False, default=1)
 
-    def __init__(self, email, nome, senha):
+    def __init__(self, email, nome, senha, hierarquia=1):
         self.email = email
         self.nome = nome
         self.senha = generate_password_hash(senha, method='sha512')
+        self.hierarquia = hierarquia
 
     def __repr__(self):
         return f'User {self.nome}'

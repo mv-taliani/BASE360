@@ -26,8 +26,8 @@ def login_post():
         if user and check_password_hash(user.senha, senha):
             login_user(user, remember=remember)
             return redirect(url_for('views.index'))
-        flash('Login ou senha inválidos!', 'danger')
-        return redirect(url_for('.login'))
+    flash('Login ou senha inválidos!', 'danger')
+    return redirect(url_for('.login'))
 
 
 @auth.route('/registrar', methods=['GET', 'POST'])

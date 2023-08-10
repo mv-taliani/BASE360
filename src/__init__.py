@@ -12,14 +12,12 @@ from src.adm import configure as adm_config
 from src.api import configure as api_config
 from src.models import Users, Cliente
 from src.cliente import configure as cliente_config
-from urllib.parse import quote
 
 
 def create_app():
     app = Flask(__name__)
-    FlaskDynaconf(app)
-    app.config.from_prefixed_env()
-
+    FlaskDynaconf(app, env='testing')
+    # app.config.from_prefixed_env()
     db_config(app)
     app.config['DEBUG_TB_TEMPLATE_EDITOR_ENABLED'] = True
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
