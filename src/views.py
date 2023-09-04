@@ -30,10 +30,10 @@ def vender():
 def pesquisar(cpf):
     if current_user.hierarquia > 1:
         cliente = Cliente.query.filter_by(cpf=cpf).first()
-        mensagem = 'Não encontrado'
+        mensagem = 'Cliente inexistente'
     else:
         cliente = Cliente.query.filter_by(cpf=cpf).join(Users).filter_by(id=current_user.id).first()
-        mensagem = 'Esse cliente pertence a outro vendendor ou não existe'
+        mensagem = 'Esse cliente pertence a outro vendendor ou inexiste'
     if not cliente:
         flash(mensagem, 'danger')
         return redirect(url_for('.vender'))

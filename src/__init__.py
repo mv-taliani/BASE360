@@ -16,15 +16,8 @@ from src.cliente import configure as cliente_config
 
 def create_app():
     app = Flask(__name__)
-    FlaskDynaconf(app)
-    app.config.from_prefixed_env()
-    app.config[
-        'SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://super:basebasebase4666@base360-3365.postgres" \
-                                     ".pythonanywhere-services.com:13365/base360"
-    app.config['SECRET_KEY'] = 'e7541985-af04-494f-a876-4dbb983853ec-lopes-supermercados-aiaiaia'
-    app.config['S3_ACCESS_KEY'] = "AKIA3QDQYWLIXKFXCYDP"
-    app.config['S3_SECRET_KEY'] = "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"
-    app.config['S3_BUCKET_NAME'] = "base360crm"
+    FlaskDynaconf(app, env='testing')
+    # app.config.from_prefixed_env()
     db_config(app)
     app.config['DEBUG_TB_TEMPLATE_EDITOR_ENABLED'] = True
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
