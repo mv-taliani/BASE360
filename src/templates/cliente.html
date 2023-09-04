@@ -89,6 +89,8 @@
             {% for i in cliente.links[0].propostas %}
               {% for j in i.preenchimentos %}
               {% if j.preenchido %}
+              {{ j.preenchido }}
+              {{ j.id }}
               <hr>
               <div class="row">
               <div class="col-sm-3">
@@ -101,6 +103,9 @@
                 <a target="_blank" href="{{ url_for('views.documentos', cpf=cliente.cpf, proposta=i.nome) }}">
                       <button class="btn btn-primary" style="background-color: #ffa500; color: white; border-color: black;">Documentos</button>
                       </a>
+               <a target="_blank" href="{{ url_for('views.contrato', cpf=cliente.cpf, proposta=i.nome) }}">
+                      <button class="btn btn-primary" style="background-color: #ffa500; color: white; border-color: black;">Proposta</button>
+                  </a>
               </div>
             </div>
               {% endif %}

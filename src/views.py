@@ -1,6 +1,6 @@
 import io
 
-from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, current_app
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, current_app, abort
 from flask_login import login_required, current_user
 import flask_excel
 import zipfile
@@ -87,23 +87,33 @@ def tabela(cpf, proposta):
 @login_required
 def contrato(cpf, proposta):
     # preenchimento = current_app.db.session.query(Preenchimento, Propostas.nome, Cliente.cpf, Instituição).filter()
-    preenchimento = Preenchimento.query.join(Propostas).add_entity(Propostas).filter_by(nome=proposta).join(Links).join(
-        Cliente).filter_by(cpf=cpf).join(Instituição).all()
+    #preenchimento = Preenchimento.query.join(Propostas).add_entity(Propostas).filter_by(nome=proposta).join(Links).join(
+    #    Cliente).filter_by(cpf=cpf).join(Instituição).all
 
     query = (
         current_app.db.session.query(Preenchimento, Propostas, Links, Cliente, Instituição)
-        .join(Propostas, Preenchimento.proposta_id)  # Substitua Preenchimento.proposta pelo relacionamento correto
+        .join(Propostas, Propostas.id == Preenchimento.proposta_id)
+        .filter_by(nome=proposta)
         .join(links_e_props, links_e_props.c.proposta_id == Propostas.id)
-        .join(Cliente, Cliente.id == Links.cliente_id)
+        .join(Links)
         .join(Instituição, Instituição.preenchimento_id == Preenchimento.id)
-        .filter(Propostas.nome == proposta, Cliente.cpf == cpf)
+        .filter(Cliente.cpf == cpf)
         .all()
-    )
+        )
 
-    colunas = ['proponente', 'responsavel', 'cnpj', 'cpf', 'endereco', 'aporte', 'lote', 'identidade', 'analise',
-               'objetivos', 'swot', 'marketing',
-               'futuro', 'observações', 'nome', 'cnpj', 'contato', 'dados bancarios']
-    return flask_excel.make_response_from_query_sets(preenchimento, colunas, 'xlsx',
+    if not query:
+        abort(404)
+
+    preen = Preenchimento()
+    for i in query[0]:
+        for j in i.metadata.tables[i.__table__.name].columns.keys()[1:]:
+            setattr(preen, j, getattr(i, j))
+
+
+    colunas = ['proponente', 'responsavel', 'cnpj', 'cpf', 'endereco', 'aporte',
+    'lote', 'identidade', 'analise', 'objetivos', 'swot', 'marketing', 'futuro',
+    'observações', 'nome', 'cnpj', 'contato', 'dados_bancarios']
+    return flask_excel.make_response_from_query_sets([preen], colunas, 'xlsx',
                                                      file_name=f'contrato_{cpf}_{proposta}')
 
 

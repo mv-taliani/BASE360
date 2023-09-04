@@ -12,14 +12,19 @@ from src.adm import configure as adm_config
 from src.api import configure as api_config
 from src.models import Users, Cliente
 from src.cliente import configure as cliente_config
-from urllib.parse import quote
 
 
 def create_app():
     app = Flask(__name__)
     FlaskDynaconf(app)
     app.config.from_prefixed_env()
-
+    app.config[
+        'SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://super:basebasebase4666@base360-3365.postgres" \
+                                     ".pythonanywhere-services.com:13365/base360"
+    app.config['SECRET_KEY'] = 'e7541985-af04-494f-a876-4dbb983853ec-lopes-supermercados-aiaiaia'
+    app.config['S3_ACCESS_KEY'] = "AKIA3QDQYWLIXKFXCYDP"
+    app.config['S3_SECRET_KEY'] = "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"
+    app.config['S3_BUCKET_NAME'] = "base360crm"
     db_config(app)
     app.config['DEBUG_TB_TEMPLATE_EDITOR_ENABLED'] = True
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
