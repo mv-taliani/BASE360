@@ -16,8 +16,9 @@ admin = Admin(name='Administrador', template_mode='bootstrap3', index_view=MyAdm
 
 
 class MyView(ModelView):
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.hierarquia >= 3
+    # def is_accessible(self):
+    #     return current_user.is_authenticated and current_user.hierarquia >= 3
+    ...
 
 
 
@@ -32,8 +33,8 @@ class TelefoneView(ModelView):
 class UsersView(MyView):
     can_export = True
 
-    def is_accessible(self):
-       return current_user.is_authenticated and current_user.hierarquia >= 3
+    # def is_accessible(self):
+    #    return current_user.is_authenticated and current_user.hierarquia >= 3
 
 
     def _on_model_change(self, form, model, is_created):

@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
 from werkzeug.datastructures import FileStorage
-from wtforms import MultipleFileField, EmailField, PasswordField, BooleanField, StringField, DateField, IntegerField, SelectField, TextAreaField
+from wtforms import MultipleFileField, EmailField, PasswordField, BooleanField, StringField, DateField, IntegerField, \
+    SelectField, TextAreaField, FormField
 from wtforms.validators import DataRequired, InputRequired, Length, EqualTo, Email, ValidationError, StopValidation
 from collections import abc
 from pydantic_br import CPF, CNPJ
@@ -110,7 +111,7 @@ class ProponenteForm(FlaskForm):
     responsavel = StringField('Responsável Legal - Se CNPJ')
     cnpj = StringField('CNPJ')
     cpf = StringField('CPF', validators=[InputRequired('Precisamos do CPF')])
-    endereco = StringField('Endereço (se empresa, deve ser o mesmo do contrato)', validators=[InputRequired('Precisamos do endereço')])
+    endereco = FormField('Endereço (se empresa, deve ser o mesmo do contrato)', validators=[InputRequired('Precisamos do endereço')])
     aporte = StringField('Valor do aporte (total do contrato)', validators=[InputRequired('Precisamos do valor'), validate_valor])
     lote = StringField('Lote de pagamento', validators=[InputRequired('Precisamos do lote')])
 
@@ -224,6 +225,8 @@ class MultipleFileAllowed:
         self.message = message
 
     def __call__(self, form, field):
+        if not field.data:
+            return
         if not (all(isinstance(data, FileStorage) for data in field.data) and field.data):
             for i in field.data:
                 print(i.filename)
@@ -251,8 +254,7 @@ class MultipleFileAllowed:
 
 
 class DocumentoForm(FlaskForm):
-    docs = MultipleFileField('Documentos necessários', validators=[InputRequired('Precisamos dos documentos'),
-                                                                   MultipleFileAllowed(['pdf'], 'Apenas PDF\'s')])
+    docs = MultipleFileField('Documentos necessários', validators=[MultipleFileAllowed(['pdf'], 'Apenas PDF\'s')])
 
 
 class EtapaFinalForm(FlaskForm):

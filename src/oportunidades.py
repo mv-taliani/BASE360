@@ -136,11 +136,11 @@ def etapa5_add():
     return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
 
 
-@oportunidades.post('/etapa6')
+@oportunidades.route('/etapa6', methods=['GET', 'POST'])
 @somente_cliente
 def etapa6():
     if g.oportunidade == 'FIM':
-        return redirect(url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), 307)
+        return redirect(url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
 
     prop_form = Etapa6Form()
     alvo = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
@@ -186,13 +186,13 @@ def etapa8():
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
-@oportunidades.post('/etapa9')
+@oportunidades.route('/etapa9', methods=['GET', 'POST'])
 @somente_cliente
 def etapa9():
     prop_form = DocumentoForm()
     alvo = url_for('lead.oportunidades.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
     if current_app.htmx:
-        if prop_form.validate():
+        if prop_form.validate_on_submit():
             # atualizar_preenchimento(prop_form, g.preenchimento)
             g.preenchimento.preenchido = True
             current_app.db.session.commit()

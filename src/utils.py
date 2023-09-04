@@ -1,6 +1,6 @@
 from functools import wraps
 from flask_login import current_user
-from flask import current_app, g, abort, redirect, url_for, jsonify, make_response
+from flask import current_app, g, abort, redirect, url_for, jsonify, make_response, session
 import boto3
 import io
 import uuid
@@ -18,7 +18,7 @@ def somente_cliente(func):
     @wraps(func)
     def inner(*args, **kwargs):
         try:
-            if current_user.cpf == g.cliente.cpf:
+            if session.get('user') == g.cliente.id:
                 return func(*args, **kwargs)
         except Exception as e:
             print(e)

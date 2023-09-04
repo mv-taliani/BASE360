@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, g, render_template, redirect, url_for, abort
+from flask import Blueprint, current_app, g, render_template, redirect, url_for, session
 from flask_htmx import make_response
 from flask_login import current_user, login_user
 from jinja2_fragments.flask import render_block
@@ -26,31 +26,26 @@ def get_cliente(endpoint, values):
 
 @lead.get('/')
 def oi():
-    if isinstance(current_user, Users):
-        return redirect(url_for('views.index'))
     if not g.cliente.senha:
         return redirect(url_for('.cliente_registrar', hashdd=g.hashdd))
     try:
-        if current_user.is_anonymous:
-            return redirect(url_for('.cliente_logar', hashdd=g.hashdd))
-        cpf = current_user.cpf
+        cpf = Cliente.query.get_or_404(session['user']).cpf
         if cpf == g.cliente.cpf:
             return render_template('catalogo.html')
     except Exception as e:
-        print(e)
-        return abort(404)
+        print('batata', e)
+        return redirect(url_for('.cliente_logar', hashdd=g.hashdd))
 
 
 @lead.route('/login', methods=['GET', 'POST'])
 def cliente_logar():
-    if current_user.is_authenticated:
+    if session.get('user'):
         return redirect(url_for('.oi', hashdd=g.hashdd))
     form = ClienteLogin()
     if form.validate_on_submit():
-        login_user(g.cliente, remember=False)
+        session['user'] = g.cliente.id
         resposta = make_response(redirect=url_for('.oi', hashdd=g.hashdd))
         return resposta
-        return redirect(url_for('.oi', hashdd=g.hashdd))
     return render_template('cadastro/proponente.html', prop_form=form, alvo=url_for('.cliente_logar', hashdd=g.hashdd))
 
 
@@ -63,7 +58,7 @@ def cliente_registrar():
         if form.validate():
             g.cliente.senha = form.senha.data
             current_app.db.session.commit()
-            login_user(g.cliente, remember=False)
+            session['user'] = g.cliente.id
             return redirect(url_for('.oi', hashdd=g.hashdd))
         return render_block('cadastro/registrar.html', 'content', reg_form=form)
     return render_template('cadastro/registrar.html', reg_form=form)
