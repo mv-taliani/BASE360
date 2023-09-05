@@ -37,9 +37,11 @@ def redirecionar_view(url, atributo, oportunidade):
     return wrapper
 
 
-
 def atualizar_preenchimento(form, model):
     for key, value in form.data.items():
+        if isinstance(value, dict):
+            for k, v in value.items():
+                setattr(model, k, v)
         if key != 'csrf_token':
             setattr(model, key, value)
 

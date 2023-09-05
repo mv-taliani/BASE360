@@ -82,6 +82,9 @@ class Links(db.Model):
 class Preenchimento(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
     proponente = db.Column(db.String(90))
+    contador = db.Column(db.String(90))
+    coordenador = db.Column(db.String(90))
+    gestor = db.Column(db.String(90))
     responsavel = db.Column(db.String(90))
     cnpj = db.Column(db.String(19))
     cpf = db.Column(db.String(15))

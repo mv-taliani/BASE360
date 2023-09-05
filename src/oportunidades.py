@@ -37,6 +37,7 @@ def index():
     alvo = url_for('lead.oportunidades.index', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
     if current_app.htmx:
         if prop_form.validate():
+            print(prop_form.data.items())
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
             return redirect(url_for('.etapa1', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
