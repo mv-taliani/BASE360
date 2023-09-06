@@ -16,8 +16,7 @@ from src.cliente import configure as cliente_config
 
 def create_app():
     app = Flask(__name__)
-    FlaskDynaconf(app, env='development')
-    app.config['DEBUG'] = True
+    FlaskDynaconf(app, env='testing')
     # app.config.from_prefixed_env()
     db_config(app)
     app.config['DEBUG_TB_TEMPLATE_EDITOR_ENABLED'] = True
