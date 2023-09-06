@@ -137,6 +137,8 @@ def proponente_form(oportunidade):
     form = ProponenteForm()
     if oportunidade != "FIP":
         delattr(form, 'cnpj')
+        delattr(form, 'coordenador')
+        delattr(form, 'gestor')
     return form
 
 
