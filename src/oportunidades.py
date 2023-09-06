@@ -33,7 +33,7 @@ def get_oportunidade(endpoint, values):
 @somente_cliente
 def index():
     if g.oportunidade == 'FIM':
-        return redirect(url_for('.etapa3', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), 307)
+        return redirect(url_for('.etapa3', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
     prop_form = proponente_form(g.oportunidade)
     alvo = url_for('lead.oportunidades.index', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
     if current_app.htmx:
@@ -41,7 +41,7 @@ def index():
             print(prop_form.data.items())
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
-            adicionar_etapa(link_id=session['link_id'], prop_id=['oportunidade_id'], etapa='1 - Proponente')
+            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='0 - Proponente')
             return make_response(redirect=url_for('.etapa1', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
         if request.method == 'GET':
             template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
@@ -59,14 +59,12 @@ def etapa1():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
-            adicionar_etapa(link_id=session['link_id'], prop_id=['oportunidade_id'], etapa='2 - Proponente')
+            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='1 - Identidade')
             return make_response(redirect=url_for('.etapa2', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
         if request.method == 'GET':
             template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
             return make_response(template, retarget='body', reswap='outerHTML')
         return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
-
-
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
@@ -79,6 +77,7 @@ def etapa2():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
+            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='2 - Análise do mercado')
             return make_response(redirect=url_for('.etapa3', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
         if request.method == 'GET':
             template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
@@ -97,6 +96,7 @@ def etapa3():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
+            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='3 - Objetivos do Negócio')
             return make_response(redirect=url_for('.etapa4', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
         if request.method == 'GET':
             template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
@@ -110,20 +110,19 @@ def etapa3():
 @somente_cliente
 def etapa4():
     if g.oportunidade == 'FIM':
-        return redirect(url_for('.etapa5', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), 307)
+        return redirect(url_for('.etapa5', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
     prop_form = Etapa4Form()
     alvo = url_for('lead.oportunidades.etapa4', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
     if current_app.htmx:
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
+            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='4 - Análise Swot')
             return make_response(redirect=url_for('.etapa5', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
         if request.method == 'GET':
             template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
             return make_response(template, retarget='body', reswap='outerHTML')
         return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
-
-
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
@@ -136,11 +135,10 @@ def etapa5():
         alvo2 = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
     else:
         alvo2 = None
+    return render_template('cadastro/tabela.html', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
 
-    return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
 
-
-@oportunidades.route('/etapa5_add')
+@oportunidades.route('/etapa5_add', methods=['GET', 'POST'])
 @somente_cliente
 def etapa5_add():
     prop_form = Etapa5Form()
@@ -150,6 +148,7 @@ def etapa5_add():
                               if key != 'csrf_token'})
         g.preenchimento.detalhes.append(detalhe)
         current_app.db.session.commit()
+        adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='5 - Análise Swot')
         if [i for i in g.preenchimento.detalhes]:
             alvo2 = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
         else:
@@ -170,6 +169,7 @@ def etapa6():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
+            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='6 - Análise Swot')
             return make_response(redirect=url_for('.etapa7', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
         if request.method == 'GET':
             template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
