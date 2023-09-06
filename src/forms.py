@@ -48,12 +48,12 @@ class ClienteForm(FlaskForm):
 
 
 class EnderecoForm(FlaskForm):
-    cep = StringField('CEP', validators=[InputRequired(), Length(min=8, max=8)])
-    pais = SelectField('UF', choices=[(uf, uf) for uf in UFS], validators=[InputRequired()])
-    bairro = StringField('Bairro', validators=[InputRequired()])
-    cidade = StringField('Cidade', validators=[InputRequired()])
-    logradouro = StringField('Rua', validators=[InputRequired()])
-    número = IntegerField('Número', validators=[InputRequired()])
+    cep = StringField('CEP:', validators=[InputRequired(), Length(min=8, max=8)])
+    pais = SelectField('UF:', choices=[(uf, uf) for uf in UFS], validators=[InputRequired()])
+    bairro = StringField('Bairro:', validators=[InputRequired()])
+    cidade = StringField('Cidade:', validators=[InputRequired()])
+    logradouro = StringField('Rua:', validators=[InputRequired()])
+    número = IntegerField('Número:', validators=[InputRequired()])
 
 
 class LinkFormBase(FlaskForm):
@@ -114,7 +114,8 @@ class ProponenteForm(FlaskForm):
     responsavel = StringField('Responsável Legal - Se CNPJ')
     cnpj = StringField('CNPJ')
     cpf = StringField('CPF', validators=[InputRequired('Precisamos do CPF')])
-    endereco = FormField(EnderecoForm, 'Endereço (se empresa, deve ser o mesmo do contrato)')
+    endereco = FormField(EnderecoForm, 'Endereço (se empresa, deve ser o mesmo do contrato)', render_kw={'style': 'display: inline-table'}
+)
     aporte = StringField('Valor do aporte (total do contrato)', validators=[InputRequired('Precisamos do valor'), validate_valor])
     lote = StringField('Lote de pagamento', validators=[InputRequired('Precisamos do lote')])
 

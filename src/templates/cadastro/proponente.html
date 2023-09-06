@@ -2,27 +2,130 @@
 
 {% block content %}
 {% from '_form_errors.html' import render_error %}
-<form hx-post="{{ alvo }}"
-      {% if file %}
-      hx-encoding='multipart/form-data'
-      {% endif %}
-      hx-target="this" hx-swap="outerHTML" class="">
-  {% include '_flash_alerts.html' %}
-  <div class="Proponente">
-    <div class="col-md-12">
-      {{ prop_form.hidden_tag() }}
-      {% for field in prop_form if field.name not in ['csrf_token'] %}
-      {% if field.type == 'TextAreaField' %}
-      {{ field.label(class='tarea') }}
-      {{ field(class="form-control text-center", required=False) }}
-      {% else %}
-      {{ field(class="form-control text-center", placeholder=field.label.text, required=False) }}
-      {% endif %}
-      {{ render_error(field) }}
-      <br>
-      {% endfor %}
-      <button class="btn btn-primary" style="background-color: #ffa500; color: white; border-color: #ffa500;" >Próximo</button>
-    </div>
+
+<div class="video" style="margin-left: 25%;">
+  <div class="col-md-12">
+    <figure>
+      <video id="video" style="width: 151%;" src="https://assets.codepen.io/9632/SampleVideo_1280x720_1mb.mp4"></video>
+      <figcaption style="width: 151%;" >
+        <label id="timer" for="progress" role="timer"></label>
+        <button id="play" aria-label="Play" role="button">►</button>
+        <progress id="progress" max="100" value="0">Progress</progress>
+      </figcaption>
+    </figure>
   </div>
-</form>
+</div>
+
+<div class="Proponente" style="display: none;">
+  <div class="col-md-12">
+    <form hx-post="{{ alvo }}"
+          {% if file %}
+          hx-encoding='multipart/form-data'
+          {% endif %}
+          hx-target="this" hx-swap="outerHTML" class="">
+      {{ prop_form.hidden_tag() }}
+      {% include '_flash_alerts.html' %}
+      <div class="Proponente">
+        <div class="col-md-12">
+          {{ prop_form.hidden_tag() }}
+          {% for field in prop_form if field.name not in ['csrf_token'] %}
+          {% if field.type ==  'TextAreaField' %}
+          {{ field.label(class='tarea') }}
+          {{ field(class="form-control text-center", required=False) }}
+          {% else %}
+          {{ field(class="form-control text-center", placeholder=field.label.text, required=False) }}
+          {% endif %}
+          {{ render_error(field) }}
+          <br>
+          {% endfor %}
+          <button class="btn btn-primary" style="background-color: #ffa500; color: white; border-color: #ffa500;">Próximo</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const videoDiv = document.querySelector(".video");
+  const proponenteDiv = document.querySelector(".Proponente");
+  const video = document.getElementById("video");
+  const progress = document.getElementById("progress");
+  const timer = document.getElementById("timer");
+  const button = document.getElementById("play");
+
+  function progressLoop() {
+    setInterval(function () {
+      progress.value = Math.round((video.currentTime / video.duration) * 100);
+      timer.innerHTML = Math.round(video.currentTime) + " Segundos";
+    });
+  }
+
+  function playPause() {
+    if (video.paused) {
+      video.play();
+      button.innerHTML = "&#10073;&#10073;";
+    } else {
+      video.pause();
+      button.innerHTML = "►";
+    }
+  }
+
+  button.addEventListener("click", playPause);
+  video.addEventListener("play", progressLoop);
+
+  video.addEventListener("ended", function () {
+    videoDiv.style.display = "none"; // Esconde a div do vídeo
+    proponenteDiv.style.display = "block"; // Mostra a div do Proponente
+  });
+</script>
+<script>
+  document.getElementById("endereco-cep").addEventListener("blur", function () {
+      const cep = this.value.replace(/\D/g, "");
+
+      if (cep.length !== 8) {
+          alert("CEP inválido. O CEP deve conter 8 dígitos.");
+          return;
+      }
+
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then(response => response.json())
+          .then(data => {
+              if (data.erro) {
+                  alert("CEP não encontrado.");
+              } else {
+                  document.getElementById("endereco-bairro").value = data.bairro;
+                  document.getElementById("endereco-logradouro").value = data.logradouro;
+                  document.getElementById("endereco-cidade").value = data.localidade;
+              }
+          })
+          .catch(error => {
+              console.error("Ocorreu um erro ao buscar o CEP:", error);
+          });
+  });
+</script>
+<script>
+  const progress = document.getElementById("progress");
+const timer = document.getElementById("timer");
+button = document.getElementById("play");
+
+function progressLoop() {
+  setInterval(function () {
+    progress.value = Math.round((video.currentTime / video.duration) * 100);
+    timer.innerHTML = Math.round(video.currentTime) + " seconds";
+  });
+}
+
+function playPause() {
+  if (video.paused) {
+    video.play();
+    button.innerHTML = "&#10073;&#10073;";
+  } else {
+    video.pause();
+    button.innerHTML = "►";
+  }
+}
+
+button.addEventListener("click", playPause);
+video.addEventListener("play", progressLoop);
+</script>
 {% endblock %}

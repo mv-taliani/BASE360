@@ -1643,7 +1643,7 @@ section {
 }
 table,
 td {
-    border: 1px solid #333;
+    display: inline-table;
 }
 
 
@@ -1685,4 +1685,105 @@ tfoot {
 
 .info-luiz {
   width: 100%;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse; /* Mescla as bordas das células da tabela */
+  table-layout: fixed; /* Evita que a tabela se ajuste ao conteúdo */
+  box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+}
+
+td {
+  box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+  display: inline-table;
+}
+
+form-control2{
+  display: inline-table;
+}
+
+figure {
+  width: 50%;
+}
+
+video {
+  display: block;
+  width: 100%;
+}
+
+figcaption {
+  align-items: center;
+  background: #eaeaea;
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: 50px auto min(115px);
+  padding: .5rem;
+}
+
+button {
+  border: 0;
+  background: #ffa500;
+  display: inline;
+  color: white;
+  order: 1;
+  padding: .5rem;
+  transition: opacity .25s ease-out;
+  width: 100%;
+}
+button:hover {
+  cursor: pointer;
+  opacity: .8;
+}
+
+label {
+  order: 2;
+  text-align: center;
+}
+
+/* Fallback stuff */
+progress[value] {
+  appearance: none;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0,.25) inset;
+  color: dodgerblue;
+  display: inline;
+  height: 15px;
+  order: 1;
+  position: relative;
+  width: 100%;
+}
+
+/* WebKit styles */
+progress[value]::-webkit-progress-bar {
+  background-color: whiteSmoke;
+  border-radius: 3px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0,.25) inset;
+}
+
+progress[value]::-webkit-progress-value {
+  background-image: linear-gradient(
+    to right,
+    #ff8a00, #ff8a00
+  );
+  border-radius: 3px;
+  position: relative;
+  transition: width 1s linear;
+}
+
+/* Firefox styles */
+progress[value]::-moz-progress-bar {
+  background-image: -moz-linear-gradient(
+    to right,
+    #ff8a00, #e52e71
+  );
+  border-radius: 3px;
+  position: relative;
+  transition: width 1s linear;
 }
