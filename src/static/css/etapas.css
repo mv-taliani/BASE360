@@ -1319,13 +1319,6 @@ section {
   background: #fff;
 }
 
-.contact .info-Luiz {
-  color: pink;
-  text-align: center;
-  box-shadow: 0 0 30px rgba(214, 215, 216, 0.6);
-  padding: 20px 0 30px 0;
-  background: #fff;
-}
 
 .contact .info-box i {
   font-size: 32px;
@@ -1659,10 +1652,6 @@ tfoot {
     color: black;
 }
 
-#tabela {
-  border-collapse: collapse;
-  margin: 10px;
-}
 
 #tabela th,
 #tabela td {
@@ -1670,5 +1659,24 @@ tfoot {
   border: 1px solid #ccc;
 }
 
-#tabela th {
+
+.info-luiz {
+  width: 100%;
 }
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse; /* Mescla as bordas das células da tabela */
+  table-layout: fixed; /* Evita que a tabela se ajuste ao conteúdo */
+  box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+}
+
+td {
+  box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+}
+
