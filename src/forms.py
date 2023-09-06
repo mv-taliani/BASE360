@@ -48,12 +48,12 @@ class ClienteForm(FlaskForm):
 
 
 class EnderecoForm(FlaskForm):
-    cep = StringField('CEP:', validators=[InputRequired(), Length(min=8, max=8)])
-    pais = SelectField('UF:', choices=[(uf, uf) for uf in UFS], validators=[InputRequired()])
-    bairro = StringField('Bairro:', validators=[InputRequired()])
-    cidade = StringField('Cidade:', validators=[InputRequired()])
-    logradouro = StringField('Rua:', validators=[InputRequired()])
-    número = IntegerField('Número:', validators=[InputRequired()])
+    cep = StringField('CEP', validators=[InputRequired(), Length(min=8, max=8)])
+    estado = SelectField('UF', choices=[(uf, uf) for uf in UFS], validators=[InputRequired()])
+    bairro = StringField('Bairro', validators=[InputRequired()])
+    cidade = StringField('Cidade', validators=[InputRequired()])
+    logradouro = StringField('Rua', validators=[InputRequired()])
+    número = IntegerField('Número', validators=[InputRequired()])
 
 
 class LinkFormBase(FlaskForm):
