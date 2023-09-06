@@ -1,16 +1,15 @@
 {% extends 'etapas.html' %}
 
 {% block content %}
-{% from '_form_errors.html' import render_error %}
 
-<div class="video" style="margin-left: 25%;">
+<div class="video" style="margin-left: 25%;" id="videoid">
   <div class="col-md-12">
     <figure>
       <video id="video" style="width: 151%;" src="https://assets.codepen.io/9632/SampleVideo_1280x720_1mb.mp4"></video>
       <figcaption style="width: 151%;" >
-        <label id="timer" for="progress" role="timer"></label>
+        <label id="timer" for="progres" role="timer"></label>
         <button id="play" aria-label="Play" role="button">►</button>
-        <progress id="progress" max="100" value="0">Progress</progress>
+        <progress id="progres" max="100" value="0">Progress</progress>
       </figcaption>
     </figure>
   </div>
@@ -18,6 +17,7 @@
 
 <div class="Proponente" style="display: none;">
   <div class="col-md-12">
+    {% block form %}
     <form hx-post="{{ alvo }}"
           {% if file %}
           hx-encoding='multipart/form-data'
@@ -25,6 +25,8 @@
           hx-target="this" hx-swap="outerHTML" class="">
       {{ prop_form.hidden_tag() }}
       {% include '_flash_alerts.html' %}
+      {% from '_form_errors.html' import render_error %}
+
       <div class="Proponente">
         <div class="col-md-12">
           {{ prop_form.hidden_tag() }}
@@ -42,6 +44,7 @@
         </div>
       </div>
     </form>
+    {% endblock %}
   </div>
 </div>
 
@@ -49,14 +52,14 @@
   const videoDiv = document.querySelector(".video");
   const proponenteDiv = document.querySelector(".Proponente");
   const video = document.getElementById("video");
-  const progress = document.getElementById("progress");
-  const timer = document.getElementById("timer");
+  const progres = document.getElementById("progres");
+  const time = document.getElementById("timer");
   const button = document.getElementById("play");
 
   function progressLoop() {
     setInterval(function () {
-      progress.value = Math.round((video.currentTime / video.duration) * 100);
-      timer.innerHTML = Math.round(video.currentTime) + " Segundos";
+      progres.value = Math.round((video.currentTime / video.duration) * 100);
+      time.innerHTML = Math.round(video.currentTime) + " Segundos";
     });
   }
 
@@ -72,7 +75,6 @@
 
   button.addEventListener("click", playPause);
   video.addEventListener("play", progressLoop);
-
   video.addEventListener("ended", function () {
     videoDiv.style.display = "none"; // Esconde a div do vídeo
     proponenteDiv.style.display = "block"; // Mostra a div do Proponente
