@@ -1,14 +1,14 @@
 import uuid
 
 import boto3
-from flask import Blueprint, g, abort, render_template, current_app, redirect, url_for, flash
+from flask import Blueprint, g, abort, render_template, current_app, redirect, url_for, flash, session
 from flask_htmx import make_response
 from jinja2_fragments.flask import render_block
 from werkzeug.utils import secure_filename
 from src.models import Propostas, Preenchimento, Detalhes, Links, Arquivos, Instituição
 from src.forms import proponente_form, Etapa1Form, Etapa2Form, Etapa3Form, Etapa4Form, Etapa5Form, Etapa6Form, \
     Etapa7Form, Etapa8Form, DocumentoForm, EtapaFinalForm
-from src.utils import atualizar_preenchimento, upload_s3, somente_cliente, redirecionar_view
+from src.utils import atualizar_preenchimento, upload_s3, somente_cliente, redirecionar_view, adicionar_etapa
 
 oportunidades = Blueprint('oportunidades', __name__)
 
@@ -18,6 +18,7 @@ def get_oportunidade(endpoint, values):
     oportunidade = values.pop('oportunidade')
     if oportunidade in [prop.nome for prop in g.cliente.links[0].propostas]:
         g.oportunidade = oportunidade
+        session['oportunidade_id'] = next(filter(lambda x: x.nome == oportunidade, g.cliente.links[0].propostas)).id
         g.preenchimento = Preenchimento.query.join(Links).filter_by(link=g.cliente.links[0].link).join(Propostas).filter_by(nome=oportunidade).first()
         if not g.preenchimento:
             g.preenchimento = Preenchimento(link_id=g.cliente.links[0].id,
@@ -40,6 +41,7 @@ def index():
             print(prop_form.data.items())
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
+            adicionar_etapa(link_id=session['link_id'], prop_id=['oportunidade_id'], etapa='1 - Proponente')
             return redirect(url_for('.etapa1', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
         return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
@@ -54,6 +56,7 @@ def etapa1():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
+            adicionar_etapa(link_id=session['link_id'], prop_id=['oportunidade_id'], etapa='2 - Proponente')
             return redirect(url_for('.etapa2', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
         return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
 

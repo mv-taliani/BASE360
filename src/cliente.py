@@ -21,6 +21,7 @@ def get_cliente(endpoint, values):
     link.links[0].acessos += 1
     g.cliente = link
     g.hashdd = hashh
+    session['link_id'] = link.links[0].id
     current_app.db.session.commit()
 
 

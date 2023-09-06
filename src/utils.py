@@ -5,6 +5,8 @@ import boto3
 import io
 import uuid
 
+from src.models import Etapas
+
 
 def validar(tipo, valor):
     try:
@@ -78,3 +80,10 @@ def get_s3(filename):
     s3.download_fileobj(current_app.config['S3_BUCKET_NAME'], filename, file_stream)
     file_stream.seek(0)
     return file_stream
+
+
+def adicionar_etapa(**preenchimento):
+    etapa = Etapas(**preenchimento)
+    current_app.db.session.add(etapa)
+    current_app.db.session.commit()
+    return

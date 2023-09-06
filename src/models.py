@@ -146,6 +146,13 @@ class Detalhes(db.Model):
     preenchimento = db.relationship('Preenchimento', backref=db.backref('detalhes', lazy='dynamic'))
 
 
+class Etapas(db.Model):
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    link_id = db.Column(db.Integer, db.ForeignKey(Links.id), nullable=False)
+    prop_id = db.Column(db.Integer, db.ForeignKey(Propostas.id), nullable=False)
+    etapa = db.Column(db.String(30))
+
+
 def configure(app):
     db.init_app(app)
     Migrate(app, db)
