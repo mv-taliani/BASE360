@@ -1,7 +1,7 @@
 import uuid
 
 import boto3
-from flask import Blueprint, g, abort, render_template, current_app, redirect, url_for, flash, session
+from flask import Blueprint, g, abort, render_template, current_app, redirect, url_for, flash, request, session
 from flask_htmx import make_response
 from jinja2_fragments.flask import render_block
 from werkzeug.utils import secure_filename
@@ -42,12 +42,15 @@ def index():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
             adicionar_etapa(link_id=session['link_id'], prop_id=['oportunidade_id'], etapa='1 - Proponente')
-            return redirect(url_for('.etapa1', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+            return make_response(redirect=url_for('.etapa1', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
-@oportunidades.post('/etapa1')
+@oportunidades.route('/etapa1', methods=['GET', 'POST'])
 @somente_cliente
 def etapa1():
     prop_form = Etapa1Form()
@@ -57,13 +60,17 @@ def etapa1():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
             adicionar_etapa(link_id=session['link_id'], prop_id=['oportunidade_id'], etapa='2 - Proponente')
-            return redirect(url_for('.etapa2', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+            return make_response(redirect=url_for('.etapa2', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
+
 
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
-@oportunidades.post('/etapa2')
+@oportunidades.route('/etapa2', methods=['GET', 'POST'])
 @somente_cliente
 def etapa2():
     prop_form = Etapa2Form()
@@ -72,8 +79,11 @@ def etapa2():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
-            return redirect(url_for('.etapa3', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+            return make_response(redirect=url_for('.etapa3', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
 
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
@@ -87,13 +97,16 @@ def etapa3():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
-            return redirect(url_for('.etapa4', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+            return make_response(redirect=url_for('.etapa4', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
 
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
-@oportunidades.post('/etapa4')
+@oportunidades.route('/etapa4', methods=['GET', 'POST'])
 @somente_cliente
 def etapa4():
     if g.oportunidade == 'FIM':
@@ -104,8 +117,12 @@ def etapa4():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
-            return redirect(url_for('.etapa5', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+            return make_response(redirect=url_for('.etapa5', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
+
 
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
@@ -123,7 +140,7 @@ def etapa5():
     return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
 
 
-@oportunidades.post('/etapa5_add')
+@oportunidades.route('/etapa5_add')
 @somente_cliente
 def etapa5_add():
     prop_form = Etapa5Form()
@@ -137,6 +154,7 @@ def etapa5_add():
             alvo2 = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
         else:
             alvo2 = None
+    alvo2=None        
     return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
 
 
@@ -144,7 +162,7 @@ def etapa5_add():
 @somente_cliente
 def etapa6():
     if g.oportunidade == 'FIM':
-        return redirect(url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
+            return make_response(redirect=url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
 
     prop_form = Etapa6Form()
     alvo = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
@@ -152,12 +170,15 @@ def etapa6():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
-            return redirect(url_for('.etapa7', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+            return make_response(redirect=url_for('.etapa7', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
-@oportunidades.post('/etapa7')
+@oportunidades.route('/etapa7')
 @somente_cliente
 def etapa7():
     prop_form = Etapa7Form()
@@ -166,12 +187,15 @@ def etapa7():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
-            return redirect(url_for('.etapa8', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+            return make_response(redirect=url_for('.etapa8', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
-@oportunidades.post('/etapa8')
+@oportunidades.route('/etapa8')
 @somente_cliente
 def etapa8():
     prop_form = Etapa8Form()
@@ -182,11 +206,14 @@ def etapa8():
             atualizar_preenchimento(prop_form, instituicao)
             g.preenchimento.insituicao.append(instituicao)
             current_app.db.session.commit()
-            return redirect(url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade), code=307)
+            return make_response(redirect=url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
         flash("Nesta seção deverá ser preenchido a contrapartida social (Ou seja, dos 10% da verba destina ao CANS, 5% "
               "ficará para o CANS e os demais serão destinados a instituição descrita abaixo) -  Descreva a instituição",
               'primary')
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
@@ -209,7 +236,10 @@ def etapa9():
                 upload_s3(arquivo)
             resposta = make_response(redirect=url_for('.etapafinal', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
             return resposta
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo, file=True)
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
 
 
 @oportunidades.route('/etapafinal', methods=['GET', 'POST'])
@@ -222,8 +252,10 @@ def etapafinal():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
             return make_response(redirect=url_for('lead.oi', hashdd=g.cliente.links[0].link))
-            return redirect(url_for('lead.oi', hashdd=g.cliente.links[0].link))
-        return render_block('cadastro/proponente.html', 'content', prop_form=prop_form, alvo=alvo)
+        if request.method == 'GET':
+            template = render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
+            return make_response(template, retarget='body', reswap='outerHTML')
+        return render_block('cadastro/proponente.html', 'form', prop_form=prop_form, alvo=alvo)
     return render_template('cadastro/proponente.html', prop_form=prop_form, alvo=alvo)
 
 
