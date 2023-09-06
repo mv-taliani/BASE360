@@ -153,8 +153,8 @@ def etapa5_add():
             alvo2 = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
         else:
             alvo2 = None
-    alvo2=None        
-    return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
+        return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
+    return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo)
 
 
 @oportunidades.route('/etapa6', methods=['GET', 'POST'])
