@@ -3,8 +3,20 @@
 {% block content %}
 {% from '_form_errors.html' import render_error %}
 
+<div class="video" style="margin-left: 25%;" id="videoid">
+  <div class="col-md-12">
+    <figure>
+      <video id="video" style="width: 151%;" src="https://assets.codepen.io/9632/SampleVideo_1280x720_1mb.mp4"></video>
+      <figcaption style="width: 151%;" >
+        <label id="timer" for="progres" role="timer"></label>
+        <button id="play" aria-label="Play" role="button">►</button>
+        <progress id="progres" max="100" value="0">Progress</progress>
+      </figcaption>
+    </figure>
+  </div>
+</div>
 
-<div class="info-luiz" >
+<div class="info-luiz" id="info-luiz">
   <div id="tab_form" hx-target="this" hx-swap="outerHTML">
   <table id="tabela" class="table">
     <thead>
@@ -51,10 +63,45 @@
       {% endif %}
 
   </div>
-
 </div>
-
-<div id="tab_form" hx-target="this" hx-swap="outerHTML">
-    <table id="tabela">
-      <thead>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var video = document.getElementById('video');
+    var infoLuiz = document.getElementById('info-luiz');
+  
+    // Adicione um ouvinte de evento para o evento 'ended' do vídeo
+    video.addEventListener('ended', function () {
+      // Exiba a seção 'info-luiz' após o vídeo ser concluído
+      infoLuiz.style.display = 'block';
+    });
+  
+    // Também pode ser uma boa ideia ocultar inicialmente a seção 'info-luiz'
+    infoLuiz.style.display = 'none';
+  });
+  </script>
+  <script>
+    const progress = document.getElementById("progress");
+  const timer = document.getElementById("timer");
+  button = document.getElementById("play");
+  
+  function progressLoop() {
+    setInterval(function () {
+      progress.value = Math.round((video.currentTime / video.duration) * 100);
+      timer.innerHTML = Math.round(video.currentTime) + " seconds";
+    });
+  }
+  
+  function playPause() {
+    if (video.paused) {
+      video.play();
+      button.innerHTML = "&#10073;&#10073;";
+    } else {
+      video.pause();
+      button.innerHTML = "►";
+    }
+  }
+  
+  button.addEventListener("click", playPause);
+  video.addEventListener("play", progressLoop);
+  </script>
 {% endblock %}
