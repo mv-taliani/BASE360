@@ -20,11 +20,10 @@ def somente_cliente(func):
     @wraps(func)
     def inner(*args, **kwargs):
         try:
-            if session.get('user') == g.cliente.id:
+            if session['user'] == g.cliente.id:
                 return func(*args, **kwargs)
         except Exception as e:
-            print(e)
-            raise e
+            return abort(404)
     return inner
 
 

@@ -144,6 +144,15 @@ class Detalhes(db.Model):
     preenchimento_id = db.Column(db.Integer, db.ForeignKey(Preenchimento.id), nullable=False)
 
     preenchimento = db.relationship('Preenchimento', backref=db.backref('detalhes', lazy='dynamic'))
+    recebimentos = db.relationship('Recebimento', backref='detalhe', lazy=True)
+
+
+class Recebimento(db.Model):
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    mes = db.Column(db.String(15))
+    valor = db.Column(db.Numeric(10, 2))
+    detalhe_id = db.Column(db.Integer, db.ForeignKey(Detalhes.id), nullable=False)
+
 
 
 class Etapas(db.Model):
