@@ -149,6 +149,7 @@ class Detalhes(db.Model):
 
 class Recebimento(db.Model):
     id = db.Column(db.Integer, primary_key=True, index=True)
+    ano = db.Column(db.Integer)
     mes = db.Column(db.String(15))
     valor = db.Column(db.Numeric(10, 2))
     detalhe_id = db.Column(db.Integer, db.ForeignKey(Detalhes.id), nullable=False)

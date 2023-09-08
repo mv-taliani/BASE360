@@ -3,13 +3,14 @@ from flask_wtf.file import FileAllowed
 from werkzeug.datastructures import FileStorage
 from wtforms import MultipleFileField, EmailField, PasswordField, BooleanField, StringField, DateField, IntegerField, \
     SelectField, TextAreaField, FormField
-from wtforms.validators import DataRequired, InputRequired, Length, EqualTo, Email, ValidationError, StopValidation
+from wtforms.validators import DataRequired, InputRequired, Length, EqualTo, Email, ValidationError, StopValidation, NumberRange
 from collections import abc
 from pydantic_br import CPF, CNPJ
 from src.models import Users, Cliente
 from src.utils import validar
 from src.constants import UFS
 
+MESES = 'Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro'.split()
 
 class LoginForm(FlaskForm):
     usuario = EmailField('Usuário', validators=[DataRequired(message='Precisamos do seu email!')])
@@ -174,6 +175,13 @@ class Etapa5Form(FlaskForm):
     periodo = StringField('Período', validators=[InputRequired('Preencha o período'), Length(max=50)])
     valor = StringField('Valor', validators=[InputRequired('Preencha o valor em R$'), validate_valor])
     justificativa = StringField('Justificativa', validators=[InputRequired('Preencha a justificativa'), Length(max=200)])
+
+
+class RecebimentoForm(FlaskForm):
+    ano = IntegerField('Ano', validators=[NumberRange(min=2000, max=3000, message='O ano precisa ser real!'),
+                                          InputRequired('Indique um ano')])
+    mes = SelectField('Mês', validators=[InputRequired('Escolha um mês')], choices=[(m, m) for m in MESES])
+    valor = StringField('Valor', validators=[InputRequired('Preencha o valor em R$'), validate_valor])
 
 
 class Etapa6Form(FlaskForm):
