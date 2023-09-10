@@ -3426,4 +3426,41 @@ progress[value]::-moz-progress-bar {
   border-radius: 3px;
   position: relative;
   transition: width 1s linear;
-}
+
+  
+  .popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    max-width: 400px; /* Define a largura máxima do pop-up */
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: 999;
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .popup h2 {
+    margin-top: 0;
+  }
+  
+  .popup input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+  }
+  
+  .popup button {
+    padding: 10px 20px;
+    margin-right: 10px;
+  }
+  
+  .popup button:last-child {
+    margin-right: 0;
+  }
+  
+  
