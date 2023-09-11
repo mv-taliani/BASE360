@@ -83,8 +83,8 @@ def test_gerar_link_deve_cadastrar_link_do_cliente_quando_entrada_valida(gerar_c
 
 def test_link_do_client_deve_ser_id_do_cliente_no_banco_encriptado(gerar_cliente, app):
     cliente = Cliente.query.first()
-    link = cliente.links
-    assert app.hashid.decode(link[0].link)[0] == cliente.id
+    link = cliente.links[0]
+    assert app.hashid.decode(link.link)[0] == cliente.id
 
 
 @pytest.mark.parametrize('oportunidade', ['FIP', 'FIM'])
