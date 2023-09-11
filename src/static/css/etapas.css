@@ -3336,6 +3336,7 @@ tfoot {
 
 td {
   box-sizing: border-box; /* Inclui o preenchimento e a borda na largura total */
+  line-height: 200%;
 }
 
 textarea {
