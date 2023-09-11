@@ -1,0 +1,45 @@
+<style>
+
+.popup button:last-child {
+  margin-right: 0;
+}
+
+
+</style>
+    {% from '_form_errors.html' import render_error %}
+
+
+<div id="popup" class="popup"
+style="display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  max-width: 400px; /* Define a largura máxima do pop-up */
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 999;
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
+  <div class="popup-content">
+    <h2 style="margin-top: 0;">Preencha os campos:</h2>
+    <p>Valor Total: R${{total}}</p>
+    {{ form.hidden_tag() }}
+    {% for campo in form if campo.name != 'csrf_token'%}
+    {{ campo.label() }}
+    {{ campo(required=False, value=campo.data if campo.data, style="width: 100%;
+  padding: 10px;
+  margin: 10px 0;") }}
+    {{ render_error(campo) }}
+    {% endfor %}
+    <button style="  padding: 10px 20px;
+  margin-right: 10px;
+" id="adicionar">Adicionar</button>
+    <button style="  padding: 10px 20px;
+  margin-right: 10px;
+" id="cancelar">Cancelar</button>
+  </div>
+</div>
+

@@ -7,7 +7,7 @@ from jinja2_fragments.flask import render_block
 from werkzeug.utils import secure_filename
 from src.models import Propostas, Preenchimento, Detalhes, Links, Arquivos, Instituição
 from src.forms import proponente_form, Etapa1Form, Etapa2Form, Etapa3Form, Etapa4Form, Etapa5Form, Etapa6Form, \
-    Etapa7Form, Etapa8Form, DocumentoForm, EtapaFinalForm
+    Etapa7Form, Etapa8Form, DocumentoForm, EtapaFinalForm, RecebimentoForm
 from src.utils import atualizar_preenchimento, upload_s3, somente_cliente, redirecionar_view, adicionar_etapa
 
 oportunidades = Blueprint('oportunidades', __name__)
@@ -152,17 +152,22 @@ def etapa5():
 def etapa5_add():
     prop_form = Etapa5Form()
     alvo = url_for('lead.oportunidades.etapa5_add', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
-    if prop_form.validate():
-        detalhe = Detalhes(**{key: value for key, value in prop_form.data.items()
-                              if key != 'csrf_token'})
-        g.preenchimento.detalhes.append(detalhe)
-        current_app.db.session.commit()
-        adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='5 - Tabela Detalhes')
-        if [i for i in g.preenchimento.detalhes]:
-            alvo2 = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
-        else:
-            alvo2 = None
-        return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo, alvo2=alvo2)
+    if current_app.htmx:
+        if prop_form.validate():
+            detalhe = Detalhes(**{key: value for key, value in prop_form.data.items()
+                                  if key != 'csrf_token'})
+            g.preenchimento.detalhes.append(detalhe)
+            current_app.db.session.commit()
+            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='5 - Tabela Detalhes')
+            # if [i for i in g.preenchimento.detalhes]:
+            #     alvo2 = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
+            # else:
+            #     alvo2 = None
+            form = RecebimentoForm()
+            template = render_template('cadastro/datas.html', total=sum([det.valor for det in g.preenchimento.detalhes]), form=form)
+            resposta = make_response(template, reswap='afterbegin')
+            return resposta
+        return render_block('cadastro/tabela.html', 'table', prop_form=prop_form, alvo=alvo)
     return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo)
 
 

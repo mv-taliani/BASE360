@@ -23,6 +23,7 @@ def somente_cliente(func):
             if session['user'] == g.cliente.id:
                 return func(*args, **kwargs)
         except Exception as e:
+            print(e)
             return abort(404)
     return inner
 

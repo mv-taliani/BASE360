@@ -1,46 +1,6 @@
 {% extends 'etapas.html' %}
 
 {% block content %}
-{% from '_form_errors.html' import render_error %}
-
-<style>
-  .popup {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 70%;
-  max-width: 400px; /* Define a largura máxima do pop-up */
-  background-color: rgba(255, 255, 255, 0.95);
-  z-index: 999;
-  text-align: center;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.popup h2 {
-  margin-top: 0;
-}
-
-.popup input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-}
-
-.popup button {
-  padding: 10px 20px;
-  margin-right: 10px;
-}
-
-.popup button:last-child {
-  margin-right: 0;
-}
-
-
-</style>
 
 <div class="video" style="margin-left: 25%;" id="videoid">
   <div class="col-md-12">
@@ -55,20 +15,11 @@
   </div>
 </div>
 
-<div id="popup" class="popup">
-  <div class="popup-content">
-    <h2>Preencha os campos:</h2>
-    <p>Valor Total:</p>
-    <input type="text" id="ano" placeholder="Ano">
-    <input type="text" id="mes" placeholder="Mês">
-    <input type="text" id="valor" placeholder="Valor">
-    <button id="adicionar">Adicionar</button>
-    <button id="cancelar">Cancelar</button>
-  </div>
-</div>
-
 
 <div class="info-luiz" id="info-luiz">
+    {% block table %}
+    {% from '_form_errors.html' import render_error %}
+
   <div id="tab_form" hx-target="this" hx-swap="outerHTML">
   <table id="tabela" class="table">
     <thead>
@@ -115,6 +66,7 @@
       {% endif %}
 
   </div>
+    {% endblock %}
 </div>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -132,7 +84,7 @@
   });
   </script>
   <script>
-    const progress = document.getElementById("progress");
+    const progress = document.getElementById("progres");
   const timer = document.getElementById("timer");
   button = document.getElementById("play");
   
@@ -173,9 +125,8 @@
   });
 </script>
 
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-  var video = document.getElementById('video');
+<script>
+  htmx.onLoad(function(target) {
   var popup = document.getElementById('popup');
   var adicionarBtn = document.getElementById('adicionar');
   var cancelarBtn = document.getElementById('cancelar');
@@ -189,47 +140,19 @@
   overlay.style.height = '100%';
   overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
   overlay.style.zIndex = '998'; // Coloque abaixo do pop-up
-  overlay.style.display = 'none';
+  overlay.style.display = 'block';
+  popup.style.display = 'block';
 
-  // Adicione a camada de fundo ao corpo do documento
+
+    // Adicione a camada de fundo ao corpo do documento
   document.body.appendChild(overlay);
 
-  // Ocultar o pop-up e a camada de fundo inicialmente
-  popup.style.display = 'none';
-
-  // Adicionar um ouvinte de evento para o evento 'ended' do vídeo
-  video.addEventListener('ended', function () {
-    // Exibir o pop-up e a camada de fundo após o vídeo terminar
-    popup.style.display = 'block';
-    overlay.style.display = 'block';
-  });
-
-  // Exibir o pop-up e a camada de fundo quando o botão for clicado
-  adicionarBtn.addEventListener('click', function () {
-    var ano = document.getElementById('ano').value;
-    var mes = document.getElementById('mes').value;
-    var valor = document.getElementById('valor').value;
-
-    if (ano && mes && valor) {
-      // Faça algo com os valores preenchidos, por exemplo, adicionando-os à tabela
-      console.log('Ano:', ano);
-      console.log('Mês:', mes);
-      console.log('Valor:', valor);
-
-      // Feche o pop-up e a camada de fundo
-      popup.style.display = 'none';
-      overlay.style.display = 'none';
-    } else {
-      alert('Preencha todos os campos!');
-    }
-  });
-
-  // Ocultar o pop-up e a camada de fundo quando o botão "Cancelar" for clicado
   cancelarBtn.addEventListener('click', function () {
     popup.style.display = 'none';
     overlay.style.display = 'none';
   });
-});
 
-  </script>
+});
+</script>
 {% endblock %}
+
