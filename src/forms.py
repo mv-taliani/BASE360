@@ -203,7 +203,7 @@ def validate_cnpj(form, field):
 
 
 class Etapa8Form(FlaskForm):
-    nome = StringField('Nome', validators=[InputRequired('Precisamos do nome')])
+    nome = StringField('Nome', validators=[InputRequired('Precisamos do nome')], default='Cans')
     cnpj = StringField('CNPJ', validators=[InputRequired('Precisamos do CNPJ'), validate_cnpj])
     contato = StringField('Contato', validators=[InputRequired('Precisamos do contato')])
     dados_bancarios = TextAreaField('Dados Bancários', validators=[InputRequired('Precisamos dos dados bancários'),
