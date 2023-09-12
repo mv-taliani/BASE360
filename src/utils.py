@@ -24,7 +24,8 @@ def somente_cliente(func):
                 return func(*args, **kwargs)
         except Exception as e:
             print(e)
-            return abort(404)
+            raise e
+            # return abort(404)
     return inner
 
 

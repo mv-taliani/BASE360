@@ -26,6 +26,8 @@ style="display: block;
   <div class="popup-content">
     <h2 style="margin-top: 0;">Preencha os campos:</h2>
     <p>Valor Total: R${{total}}</p>
+      {% block form %}
+    <form method="post" class="recebimento">
     {{ form.hidden_tag() }}
     {% for campo in form if campo.name != 'csrf_token'%}
     {{ campo.label() }}
@@ -34,8 +36,15 @@ style="display: block;
   margin: 10px 0;") }}
     {{ render_error(campo) }}
     {% endfor %}
+            <button style="padding: 10px 20px; margin-right: 10px;" id="adicionar"
+            hx-post="{{ url_for('lead.oportunidades.add_data', id=id, hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade) }}"
+            hx-target="#popup" hx-swap="outerHTML">
+        Adicionar
+    </button>
 
-    <h4>2023</h4>
+    </form>
+{% for ano, rcbmts in anos %}
+    <h4>{{ano}}</h4>
 
     <table style="display: inline-block;">
       <div style="padding: 0 1% 0 1%;">
@@ -43,22 +52,20 @@ style="display: block;
             <td>Mês</td>
             <td>Valor</td>
         </tr>
+          {% for rcbmt in rcbmts %}
         <tr>
-            <td>Agosto</td>
-            <td>22.000</td>
+            <td>{{rcbmt[1]}}</td>
+            <td>R${{rcbmt[2]}}</td>
         </tr>
-        <tr>
-            <td>Novembro</td>
-            <td>26.000</td>
-        </tr>
+          {% endfor %}
     </div>
   </table>
-    <button style="  padding: 10px 20px;
-  margin-right: 10px;
-" id="adicionar">Adicionar</button>
-    <button style="  padding: 10px 20px;
-  margin-right: 10px;
-" id="cancelar">Cancelar</button>
+{% endfor %}
+            {% endblock %}
+
+    <button style="padding: 10px 20px; margin-right: 10px;" id="cancelar">
+        Cancelar
+    </button>
   </div>
 </div>
 

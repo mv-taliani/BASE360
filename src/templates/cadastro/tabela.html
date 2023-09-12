@@ -128,11 +128,14 @@
 <script>
   htmx.onLoad(function(target) {
   var popup = document.getElementById('popup');
+  if ( document.querySelector('#overlay') ) {
+  } else {
+
   var adicionarBtn = document.getElementById('adicionar');
-  var cancelarBtn = document.getElementById('cancelar');
 
   // Crie um elemento div para a camada de fundo opaca
   var overlay = document.createElement('div');
+  overlay.id = 'overlay'
   overlay.style.position = 'fixed';
   overlay.style.top = '0';
   overlay.style.left = '0';
@@ -145,13 +148,16 @@
 
 
     // Adicione a camada de fundo ao corpo do documento
-  document.body.appendChild(overlay);
+  document.body.appendChild(overlay)
+};
 
+
+  var cancelarBtn = document.getElementById('cancelar');
   cancelarBtn.addEventListener('click', function () {
     popup.style.display = 'none';
     overlay.style.display = 'none';
-  });
 
+  });
 });
 </script>
 {% endblock %}

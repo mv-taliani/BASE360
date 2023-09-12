@@ -180,7 +180,7 @@ class Etapa5Form(FlaskForm):
 class RecebimentoForm(FlaskForm):
     ano = IntegerField('Ano', validators=[NumberRange(min=2000, max=3000, message='O ano precisa ser real!'),
                                           InputRequired('Indique um ano')])
-    mes = SelectField('Mês', validators=[InputRequired('Escolha um mês')], choices=[(m, m) for m in MESES])
+    mes = SelectField('Mês', validators=[DataRequired('Escolha um mês')], choices=[(m, m,) for m in MESES])
     valor = StringField('Valor', validators=[InputRequired('Preencha o valor em R$'), validate_valor])
 
 

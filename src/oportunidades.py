@@ -1,13 +1,14 @@
+import decimal
 import uuid
-
+from itertools import groupby
 import boto3
 from flask import Blueprint, g, abort, render_template, current_app, redirect, url_for, flash, request, session
 from flask_htmx import make_response
 from jinja2_fragments.flask import render_block
 from werkzeug.utils import secure_filename
-from src.models import Propostas, Preenchimento, Detalhes, Links, Arquivos, Instituição
+from src.models import Propostas, Preenchimento, Detalhes, Links, Arquivos, Instituição, Recebimento
 from src.forms import proponente_form, Etapa1Form, Etapa2Form, Etapa3Form, Etapa4Form, Etapa5Form, Etapa6Form, \
-    Etapa7Form, Etapa8Form, DocumentoForm, EtapaFinalForm, RecebimentoForm
+    Etapa7Form, Etapa8Form, DocumentoForm, EtapaFinalForm, RecebimentoForm, MESES
 from src.utils import atualizar_preenchimento, upload_s3, somente_cliente, redirecionar_view, adicionar_etapa
 
 oportunidades = Blueprint('oportunidades', __name__)
@@ -163,12 +164,43 @@ def etapa5_add():
             #     alvo2 = url_for('lead.oportunidades.etapa6', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade)
             # else:
             #     alvo2 = None
+            current_app.db.session.flush(detalhe)
             form = RecebimentoForm()
-            template = render_template('cadastro/datas.html', total=sum([det.valor for det in g.preenchimento.detalhes]), form=form)
+            template = render_template('cadastro/datas.html',
+                                       total=sum([det.valor for det in g.preenchimento.detalhes]),
+                                       form=form, id=detalhe.id)
             resposta = make_response(template, reswap='afterbegin')
             return resposta
         return render_block('cadastro/tabela.html', 'table', prop_form=prop_form, alvo=alvo)
     return render_block('cadastro/tabela.html', 'content', prop_form=prop_form, alvo=alvo)
+
+
+@oportunidades.post('add_data/<id>')
+@somente_cliente
+def add_data(id):
+    form = RecebimentoForm()
+    detalhe = Detalhes.query.get(id)
+    rcbmts = detalhe.recebimentos
+    if form.validate():
+        recebimento = Recebimento.query.filter_by(ano=form.ano.data, mes=form.mes.data).join(Detalhes).filter_by(id=id).first()
+        if recebimento:
+            total = sum([det.valor for det in g.preenchimento.detalhes]) - sum([rec.valor for rec in rcbmts])
+            valor = decimal.Decimal(form.valor.data)
+            if (soma := total - valor) < 0:
+                form.valor.errors.append(f'Valor inválido! A diferença fica {soma}')
+            else:
+                recebimento.valor += valor
+        else:
+            recebimento = Recebimento(ano=form.ano.data, mes=form.mes.data, valor=form.valor.data)
+            rcbmts.append(recebimento)
+        current_app.db.session.commit()
+    amv = [(i.ano, i.mes, i.valor) for i in rcbmts]
+    anos = sorted(amv, key=lambda x: (x[0], MESES.index(x[1])))
+    anos = groupby(anos, lambda x: x[0])
+
+    total = sum([det.valor for det in g.preenchimento.detalhes]) - sum([rec.valor for rec in rcbmts])
+    return render_template('cadastro/datas.html', id=id, rcbmts=rcbmts, anos=anos if anos else [], total=total,
+                           form=form)
 
 
 @oportunidades.route('/etapa6', methods=['GET', 'POST'])
@@ -182,7 +214,8 @@ def etapa6():
         if prop_form.validate():
             atualizar_preenchimento(prop_form, g.preenchimento)
             current_app.db.session.commit()
-            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='6 - Plano de Marketing')
+            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'],
+                            etapa='6 - Plano de Marketing')
             return make_response(
                 redirect=url_for('.etapa7', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
         if request.method == 'GET':
@@ -222,7 +255,8 @@ def etapa8():
             atualizar_preenchimento(prop_form, instituicao)
             g.preenchimento.insituicao.append(instituicao)
             current_app.db.session.commit()
-            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'], etapa='8 - Contrapartida Social')
+            adicionar_etapa(link_id=session['link_id'], prop_id=session['oportunidade_id'],
+                            etapa='8 - Contrapartida Social')
             return make_response(
                 redirect=url_for('.etapa9', hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade))
         flash("Nesta seção deverá ser preenchido a contrapartida social (Ou seja, dos 10% da verba destina ao CANS, 5% "
