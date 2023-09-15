@@ -1,68 +1,77 @@
 <style>
-
-.popup button:last-child {
-  margin-right: 0;
-}
-
-
+  .popup button:last-child {
+      margin-right: 0;
+  }
 </style>
-    {% from '_form_errors.html' import render_error %}
 
+{% from '_form_errors.html' import render_error %}
 
-    <div id="popup" class="popup"
-    style="display: block;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 70%;
-      max-width: 400px; /* Define a largura máxima do pop-up */
-      background-color: rgba(255, 255, 255, 0.95);
-      z-index: 999;
-      text-align: center;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
-      <div class="popup-content" style="max-height: 400px; overflow-y: auto;">
-        <h2 style="margin-top: 0;">Preencha os campos:</h2>
-        <p>Valor Total: R${{total}}</p>
-          {% block form %}
-        <form method="post" class="recebimento">
-        {{ form.hidden_tag() }}
-        {% for campo in form if campo.name != 'csrf_token'%}
-        {{ campo.label() }}
-        {{ campo(required=False, value=campo.data if campo.data, style="width: 100%;
-      padding: 10px;
-      margin: 10px 0;") }}
-        {{ render_error(campo) }}
-        {% endfor %}
-        <button style="padding: 10px 20px; margin-right: 10px;" id="adicionar"
-        hx-post="{{ url_for('lead.oportunidades.add_data', id=id, hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade) }}"
-        hx-target="#popup" hx-swap="outerHTML">
-        Adicionar
-        </button>
-        </form>
-        {% for ano, rcbmts in anos %}
-        <h4>{{ano}}</h4>
-        <table style="display: inline-block;">
-        <div style="padding: 0 1% 0 1%;">
-        <tr>
-            <td>Mês</td>
-            <td>Valor</td>
-        </tr>
-        {% for rcbmt in rcbmts %}
-        <tr>
-            <td>{{rcbmt[1]}}</td>
-            <td>R${{rcbmt[2]}}</td>
-        </tr>
-        {% endfor %}
-        </div>
-        </table>
-        {% endfor %}
-        {% endblock %}
-        <button style="padding: 10px 20px; margin-right: 10px;" id="cancelar">
-        Confirmar
-        </button>
-      </div>
-    </div>
-    
+<div id="popup" class="popup"
+  style="display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 36%;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 999;
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
+
+  <div class="popup-content" style="max-height: 300px; overflow-y: auto;">
+      <h2 style="margin-top: 0;">Preencha os campos:</h2>
+      <p>Valor Total: R${{total}}</p>
+      {% block form %}
+      <form method="post" class="recebimento">
+          {{ form.hidden_tag() }}
+          {% for campo in form if campo.name != 'csrf_token'%}
+          {{ campo.label() }}
+          {{ campo(required=False, value=campo.data if campo.data, style="width: 100%;
+          padding: 10px;
+          margin: 10px 0;") }}
+          {{ render_error(campo) }}
+          {% endfor %}
+          <button style="padding: 10px 20px; margin-right: 10px;" id="adicionar"
+              hx-post="{{ url_for('lead.oportunidades.add_data', id=id, hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade) }}"
+              hx-target="#popup" hx-swap="outerHTML">
+              Adicionar
+          </button>
+      </form>
+      {% for ano, rcbmts in anos %}
+      <h4>{{ano}}</h4>
+      <table style="display: inline-block;">
+          <div style="padding: 0 1% 0 1%;">
+              <tr>
+                  <td>Mês</td>
+                  <td>Valor</td>
+              </tr>
+              {% for rcbmt in rcbmts %}
+              <tr>
+                  <td>{{rcbmt[1]}}</td>
+                  <td>R${{rcbmt[2]}}</td>
+              </tr>
+              {% endfor %}
+          </div>
+      </table>
+      {% endfor %}
+      {% endblock %}
+      <br>
+
+      {% if total == 0 %}
+      <button style="padding: 10px 20px; margin-right: 10px;" id="cancelar">
+          Concluir
+      </button>
+      {% endif %}
+  </div>
+</div>
+
+<script>
+    var cancelarBtn = document.getElementById('cancelar');
+  cancelarBtn.addEventListener('click', function () {
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+
+  });
+</script>
