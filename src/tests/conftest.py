@@ -1,18 +1,18 @@
-from src import create_app
-from src.models import Propostas, Cliente, db, Users
-from flask import url_for
 import pytest
+from flask import url_for
 
-PROPOSTAS = ['FIP', 'FIM', 'FIS', 'FIE', 'FIV', 'PAM', 'PAE', 'PIEDU']
+from src import create_app
+from src.models import Cliente, Propostas, Users, db
 
-C_CPF = '123456789012'
-C_NOME = 'Teste Client'
-C_TELEFONE = '1196767676776'
-C_CHECKS = ['FIP', 'FIM']
+PROPOSTAS = ["FIP", "FIM", "FIS", "FIE", "FIV", "PAM", "PAE", "PIEDU"]
+
+C_CPF = "123456789012"
+C_NOME = "Teste Client"
+C_TELEFONE = "1196767676776"
+C_CHECKS = ["FIP", "FIM"]
 
 
-
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def app():
     app = create_app()
     return app
@@ -24,7 +24,11 @@ def database(app):
         db.create_all()
         db.create_all()
         for prop in PROPOSTAS:
-            p = Propostas(nome=prop, sobre='sobre sobre sobre sobre sobre sobre sobre sobre', ativo=True)
+            p = Propostas(
+                nome=prop,
+                sobre="sobre sobre sobre sobre sobre sobre sobre sobre",
+                ativo=True,
+            )
             db.session.add(p)
         db.session.commit()
         yield db
@@ -33,7 +37,7 @@ def database(app):
 
 @pytest.fixture()
 def criar_user(database):
-    user = Users(email='email@email.com', nome='teste', senha='1234', hierarquia=4)
+    user = Users(email="email@email.com", nome="teste", senha="1234", hierarquia=4)
     database.session.add(user)
     database.session.commit()
     return user
@@ -41,7 +45,7 @@ def criar_user(database):
 
 @pytest.fixture()
 def criar_vendedor(database):
-    user = Users(email='vendedor@email.com', nome='v_teste', senha='1234')
+    user = Users(email="vendedor@email.com", nome="v_teste", senha="1234")
     database.session.add(user)
     database.session.commit()
     return user
@@ -50,30 +54,62 @@ def criar_vendedor(database):
 @pytest.fixture()
 def logged_client(client, criar_user):
     with client.session_transaction() as sess:
-        res = client.post(url_for('auth.login_post'), data=dict(usuario='email@email.com', senha='1234', lembrar=False),
-                          follow_redirects=True)
+        res = client.post(
+            url_for("auth.login_post"),
+            data=dict(usuario="email@email.com", senha="1234", lembrar=False),
+            follow_redirects=True,
+        )
     yield client
 
 
 @pytest.fixture()
 def vendedor_client(client, criar_vendedor):
     with client.session_transaction() as sess:
-        res = client.post(url_for('auth.login_post'), data=dict(usuario='vendedor@email.com', senha='1234', lembrar=False),
-                          follow_redirects=True)
+        res = client.post(
+            url_for("auth.login_post"),
+            data=dict(usuario="vendedor@email.com", senha="1234", lembrar=False),
+            follow_redirects=True,
+        )
+    yield client
+
+
+@pytest.fixture()
+def cliente_client(client, link1):
+    with client.session_transaction() as sess:
+        data = {
+            "cpf": C_CPF,
+            "senha": "212312312312",
+            "confirmar_senha": "212312312312",
+        }
+        res = client.post(
+            url_for("lead.cliente_registrar", hashdd=link1),
+            data=data,
+            headers={"HX-Request": "true"},
+            follow_redirects=True,
+        )
     yield client
 
 
 @pytest.fixture()
 def gerar_cliente(logged_client):
-    res = logged_client.post(url_for('api.gerar_link'), data=dict(cpf=C_CPF, nome=C_NOME,
-                                                                  telefone=C_TELEFONE, check=C_CHECKS),
-                             follow_redirects=True)
+    res = logged_client.post(
+        url_for("api.gerar_link"),
+        data=dict(cpf=C_CPF, nome=C_NOME, telefone=C_TELEFONE, check=C_CHECKS),
+        follow_redirects=True,
+    )
     return res
 
 
 @pytest.fixture()
 def gerar_cliente2(logged_client):
-    res = logged_client.post(url_for('api.gerar_link'), data=dict(cpf=C_CPF, nome=C_NOME,
-                                                                  telefone=C_TELEFONE, check=C_CHECKS),
-                             follow_redirects=True)
+    res = logged_client.post(
+        url_for("api.gerar_link"),
+        data=dict(cpf=C_CPF, nome=C_NOME, telefone=C_TELEFONE, check=C_CHECKS),
+        follow_redirects=True,
+    )
     return res
+
+
+@pytest.fixture()
+def link1(app, gerar_cliente):
+    return app.hashid.encode(1)

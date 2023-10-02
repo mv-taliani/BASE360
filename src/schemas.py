@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from pydantic_br import CPFDigits, CNPJDigits
+from pydantic_br import CNPJDigits, CPFDigits
 
 
 class NovoCliente(BaseModel):

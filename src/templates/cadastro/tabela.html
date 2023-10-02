@@ -154,6 +154,7 @@
 
   var cancelarBtn = document.getElementById('cancelar');
   cancelarBtn.addEventListener('click', function () {
+    document.querySelector('#overlay').style.display = 'none';
     popup.style.display = 'none';
     overlay.style.display = 'none';
 
