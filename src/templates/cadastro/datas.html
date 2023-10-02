@@ -60,7 +60,8 @@
       <br>
 
       {% if total == 0 %}
-      <button style="padding: 10px 20px; margin-right: 10px;" id="cancelar">
+      <button hx-get="{{ url_for('lead.oportunidades.etapa5_add', id=id, hashdd=g.cliente.links[0].link, oportunidade=g.oportunidade) }}"
+              hx-swap="innerHTML" hx-target="#info-luiz"  style="padding: 10px 20px; margin-right: 10px;" id="cancelar">
           Concluir
       </button>
       {% endif %}
