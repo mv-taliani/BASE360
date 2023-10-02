@@ -332,21 +332,22 @@ def add_data(id):
             .filter_by(id=id)
             .first()
         )
-        if recebimento:
-            total = detalhe.valor - sum(
-                [rec.valor for rec in rcbmts]
-            )
-            valor = decimal.Decimal(form.valor.data)
-            if (soma := total - valor) < 0:
-                form.valor.errors.append(f"Valor inválido! A diferença fica {soma}")
-            else:
+        total = detalhe.valor - sum(
+            [rec.valor for rec in rcbmts]
+        )
+        valor = decimal.Decimal(form.valor.data)
+
+        if (soma := total - valor) < 0:
+            form.valor.errors.append(f"Valor inválido! A diferença fica {soma}")
+        else:    
+            if recebimento:
                 recebimento.valor += valor
-        else:
-            recebimento = Recebimento(
-                ano=form.ano.data, mes=form.mes.data, valor=form.valor.data
-            )
-            rcbmts.append(recebimento)
-        current_app.db.session.commit()
+            else:
+                recebimento = Recebimento(
+                    ano=form.ano.data, mes=form.mes.data, valor=form.valor.data
+                )
+                rcbmts.append(recebimento)
+            current_app.db.session.commit()
     amv = [(i.ano, i.mes, i.valor) for i in rcbmts]
     anos = sorted(amv, key=lambda x: (x[0], MESES.index(x[1])))
     anos = groupby(anos, lambda x: x[0])
