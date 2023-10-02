@@ -305,7 +305,7 @@ def etapa5_add():
             form = RecebimentoForm()
             template = render_template(
                 "cadastro/datas.html",
-                total=Detalhes.query.get(detalhe.id).first().valor,
+                total=Detalhes.query.get(detalhe.id).valor,
                 form=form,
                 id=detalhe.id,
             )
@@ -333,7 +333,7 @@ def add_data(id):
             .first()
         )
         if recebimento:
-            total = sum([det.valor for det in g.preenchimento.detalhes]) - sum(
+            total = detalhe.valor - sum(
                 [rec.valor for rec in rcbmts]
             )
             valor = decimal.Decimal(form.valor.data)
@@ -351,7 +351,7 @@ def add_data(id):
     anos = sorted(amv, key=lambda x: (x[0], MESES.index(x[1])))
     anos = groupby(anos, lambda x: x[0])
 
-    total = sum([det.valor for det in g.preenchimento.detalhes]) - sum(
+    total = detalhe.valor - sum(
         [rec.valor for rec in rcbmts]
     )
     return render_template(
